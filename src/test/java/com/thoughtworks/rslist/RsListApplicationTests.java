@@ -1,5 +1,6 @@
 package com.thoughtworks.rslist;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.rslist.model.Rs;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -10,8 +11,13 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.hasSize;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -23,8 +29,15 @@ class RsListApplicationTests {
     @Test
     void contextLoads() {
         try {
+            List<Rs> list = new ArrayList<Rs>();
+            list.add(new Rs("第一条事件", "猪肉"));
+            list.add(new Rs("第二条事件", "牛肉"));
+            list.add(new Rs("第三条事件", "羊肉"));
             mockMvc.perform(MockMvcRequestBuilders.get("/rs/list"))
-                    .andExpect(content().string("[第一条事件, 第二条事件, 第三条事件]")).andExpect(status().isOk());
+                    .andExpect(jsonPath("$", hasSize(3)))
+                    .andExpect(jsonPath("$[0].name", is("第一条事件")))
+                    .andExpect(jsonPath("$[0].keyword", is("猪肉")))
+                    .andExpect(status().isOk());
         }catch (Exception e) {
             e.printStackTrace();
         }
@@ -34,7 +47,9 @@ class RsListApplicationTests {
     public void given_index_then_return_corresponding_Rs () {
         try {
             mockMvc.perform(MockMvcRequestBuilders.get("/rs/1"))
-                    .andExpect(content().string("第一条事件")).andExpect(status().isOk());
+                    .andExpect(jsonPath("$.name", is("第一条事件")))
+                    .andExpect(jsonPath("$.keyword", is("猪肉")))
+                    .andExpect(status().isOk());
         }catch (Exception e) {
             e.printStackTrace();
         }
@@ -47,7 +62,10 @@ class RsListApplicationTests {
             int end = 2;
             String url = "/rs/sublist?start=" + start + "&end=" + end;
             mockMvc.perform(MockMvcRequestBuilders.get(url))
-                    .andExpect(content().string("[第一条事件]")).andExpect(status().isOk());
+                    .andExpect(jsonPath("$", hasSize(1)))
+                    .andExpect(jsonPath("$[0].name", is("第一条事件")))
+                    .andExpect(jsonPath("$[0].keyword", is("猪肉")))
+                    .andExpect(status().isOk());
         }catch (Exception e) {
             e.printStackTrace();
         }
@@ -56,12 +74,17 @@ class RsListApplicationTests {
     @Test
     public void given_one_Rs_then_add_into_list () {
         try {
-            String jsonStr = "{\"name\": \"新增的事件\"}";
+            Rs rs = new Rs("新增的事件", "热干面");
+            ObjectMapper objectMapper = new ObjectMapper();
+            String rsJson = objectMapper.writeValueAsString(rs);
             mockMvc.perform(MockMvcRequestBuilders.post("/rs/addRs")
-                    .contentType(MediaType.APPLICATION_JSON).content(jsonStr))
+                    .contentType(MediaType.APPLICATION_JSON).content(rsJson))
                     .andExpect(status().isOk());
             mockMvc.perform(MockMvcRequestBuilders.get("/rs/list"))
-                    .andExpect(content().string("[第一条事件, 第二条事件, 第三条事件, 新增的事件]"));
+                    .andExpect(jsonPath("$", hasSize(4)))
+                    .andExpect(jsonPath("$[3].name", is("新增的事件")))
+                    .andExpect(jsonPath("$[3].keyword", is("热干面")))
+                    .andExpect(status().isOk());
         }catch (Exception e) {
             e.printStackTrace();
         }
