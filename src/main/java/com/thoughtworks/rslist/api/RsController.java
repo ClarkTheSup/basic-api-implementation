@@ -41,4 +41,9 @@ public class RsController {
     rsList.add(rs);
   }
 
+  @PostMapping("/rs/modifyRs/{index}")
+  public void modifyRsInList(@PathVariable Integer index, @RequestBody Rs rs) {
+    rsList.set(index-1, rs);
+  }
+
 }
