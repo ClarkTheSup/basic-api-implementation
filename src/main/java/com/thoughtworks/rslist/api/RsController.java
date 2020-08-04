@@ -46,4 +46,9 @@ public class RsController {
     rsList.set(index-1, rs);
   }
 
+  @PostMapping("/rs/deleteRs/{index}")
+  public void deleteRsInList(@PathVariable Integer index) {
+    rsList.remove(index-1);
+  }
+
 }

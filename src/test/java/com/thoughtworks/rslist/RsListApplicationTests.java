@@ -119,5 +119,22 @@ class RsListApplicationTests {
         }
     }
 
+    @Test
+    public void given_index_then_delete () {
+        try {
+            mockMvc.perform(MockMvcRequestBuilders.post("/rs/deleteRs/2"))
+                    .andExpect(status().isOk());
+            mockMvc.perform(MockMvcRequestBuilders.get("/rs/list"))
+                    .andExpect(jsonPath("$", hasSize(2)))
+                    .andExpect(jsonPath("$[0].name", is("第一条事件")))
+                    .andExpect(jsonPath("$[0].keyword", is("猪肉")))
+                    .andExpect(jsonPath("$[1].name", is("第三条事件")))
+                    .andExpect(jsonPath("$[1].keyword", is("羊肉")))
+                    .andExpect(status().isOk());
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 
 }
