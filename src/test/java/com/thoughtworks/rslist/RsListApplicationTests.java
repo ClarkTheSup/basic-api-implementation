@@ -3,11 +3,8 @@ package com.thoughtworks.rslist;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.rslist.api.RsController;
 import com.thoughtworks.rslist.model.Rs;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -16,7 +13,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.Matchers.is;
@@ -104,15 +100,25 @@ class RsListApplicationTests {
     @Test
     public void given_one_new_Rs_and_index_then_modify () {
         try {
-            Rs rs = new Rs("修改的事件", "黄焖鸡");
-            ObjectMapper objectMapper = new ObjectMapper();
-            String rsJson = objectMapper.writeValueAsString(rs);
-            mockMvc.perform(MockMvcRequestBuilders.post("/rs/modifyRs/2")
-                    .contentType(MediaType.APPLICATION_JSON).content(rsJson))
+            String url1 = "/rs/modifyRs?index=1&name=ttt&keyword=zzz";
+            mockMvc.perform(MockMvcRequestBuilders.post(url1)).andExpect(status().isOk());
+            mockMvc.perform(MockMvcRequestBuilders.get("/rs/1"))
+                    .andExpect(jsonPath("$.name", is("ttt")))
+                    .andExpect(jsonPath("$.keyword", is("zzz")))
                     .andExpect(status().isOk());
+
+            String url2 = "/rs/modifyRs?index=2&name=hasName";
+            mockMvc.perform(MockMvcRequestBuilders.post(url2)).andExpect(status().isOk());
             mockMvc.perform(MockMvcRequestBuilders.get("/rs/2"))
-                    .andExpect(jsonPath("$.name", is("修改的事件")))
-                    .andExpect(jsonPath("$.keyword", is("黄焖鸡")))
+                    .andExpect(jsonPath("$.name", is("hasName")))
+                    .andExpect(jsonPath("$.keyword", is("牛肉")))
+                    .andExpect(status().isOk());
+
+            String url3 = "/rs/modifyRs?index=3&keyword=hasKeyword";
+            mockMvc.perform(MockMvcRequestBuilders.post(url3)).andExpect(status().isOk());
+            mockMvc.perform(MockMvcRequestBuilders.get("/rs/3"))
+                    .andExpect(jsonPath("$.name", is("第三条事件")))
+                    .andExpect(jsonPath("$.keyword", is("hasKeyword")))
                     .andExpect(status().isOk());
         }catch (Exception e) {
             e.printStackTrace();
