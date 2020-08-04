@@ -1,7 +1,7 @@
 package com.thoughtworks.rslist.api;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.thoughtworks.rslist.model.Rs;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -14,4 +14,24 @@ public class RsController {
   public String getRsListString() {
     return rsList.toString();
   }
+
+  @GetMapping("/rs/{index}")
+  public String getRsString(@PathVariable int index) {
+    return rsList.get(index-1);
+  }
+
+  @GetMapping("/rs/sublist")
+  public String getRsListBetweenString(@RequestParam(required = false) Integer start, @RequestParam Integer end) {
+    if (start == null) {
+      return rsList.subList(0, end-1).toString();
+    } else {
+      return rsList.subList(start-1, end-1).toString();
+    }
+  }
+
+  @PostMapping("/rs/addRs")
+  public void addRsToList(@RequestBody Rs rs) {
+    rsList.add(rs.getName());
+  }
+
 }
