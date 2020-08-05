@@ -5,6 +5,7 @@ import com.thoughtworks.rslist.model.Rs;
 import com.thoughtworks.rslist.model.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -35,7 +36,7 @@ public class RsController {
   @GetMapping("/rs/{index}")
   public ResponseEntity getRsString(@PathVariable int index) {
     if (index < 1 || index > rsList.size()) {
-      throw new RsNotValidException("invalid index");
+      throw new RsIndexNotValidException("invalid index");
     }
     return ResponseEntity.ok(rsList.get(index-1));
   }
@@ -46,11 +47,11 @@ public class RsController {
       if (end > 0 && end <= rsList.size()) {
         return ResponseEntity.ok(rsList.subList(0, end-1));
       } else {
-        throw new StartEndParamException("invalid param");
+        throw new StartEndParamException("invalid request param");
       }
     } else {
       if (start < 0 || start > rsList.size() || end < 1 || end > rsList.size()+1) {
-        throw new StartEndParamException("invalid param");
+        throw new StartEndParamException("invalid request param");
       }
       return ResponseEntity.ok(rsList.subList(start-1, end-1));
     }
@@ -90,7 +91,11 @@ public class RsController {
   @ExceptionHandler
   public ResponseEntity handleException(Exception e) {
     Error error = new Error();
-    error.setError(e.getMessage());
+    if (e instanceof StartEndParamException || e instanceof RsIndexNotValidException) {
+      error.setError(e.getMessage());
+    } else {
+      error.setError("invalid param");
+    }
     return ResponseEntity.badRequest().body(error);
   }
 

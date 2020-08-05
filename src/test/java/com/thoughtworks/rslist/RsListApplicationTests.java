@@ -215,6 +215,17 @@ class RsListApplicationTests {
     }
 
     @Test
+    public void given_out_of_bound_start_and_end_then_handle_exception() throws Exception {
+        int start = -1;
+        int end = 9;
+        String url = "/rs/sublist?start=" + start + "&end=" + end ;
+        mockMvc.perform(get(url))
+                .andExpect(jsonPath("$.error", is("invalid request param")))
+                .andExpect(status().isBadRequest());
+
+    }
+
+    @Test
     public void given_out_of_bound_index_then_handle_exception() throws Exception {
         mockMvc.perform(get("/rs/0"))
                 .andExpect(jsonPath("$.error", is("invalid index")))
@@ -223,14 +234,35 @@ class RsListApplicationTests {
     }
 
     @Test
-    public void given_out_of_bound_start_and_end_then_handle_exception() throws Exception {
-        int start = -1;
-        int end = 9;
-        String url = "/rs/sublist?start=" + start + "&end=" + end ;
-        mockMvc.perform(get(url))
-                .andExpect(jsonPath("$.error", is("invalid param")))
-                .andExpect(status().isBadRequest());
+    public void when_add_Rs_given_null_attributes_then_handle_exception () {
+        try {
+            String rsJson1 = "{\"keyword\":\"热干面\"," +
+                    "\"user\": {\"userName\":\"jim\",\"age\": 19,\"gender\": \"男\"," +
+                    "\"email\": \"jim@163.com\",\"phone\": \"21111111111\"," +
+                    "\"voteNum\": \"10\"}}";
+            mockMvc.perform(MockMvcRequestBuilders.post("/rs/addRs")
+                    .contentType(MediaType.APPLICATION_JSON).content(rsJson1))
+                    .andExpect(jsonPath("$.error", is("invalid param")))
+                    .andExpect(status().isBadRequest());
 
+            String rsJson2 = "{\"name\":\"新增的事件\"," +
+                    "\"user\": {\"userName\":\"jim\",\"age\": 19,\"gender\": \"男\"," +
+                    "\"email\": \"jim@163.com\",\"phone\": \"21111111111\"," +
+                    "\"voteNum\": \"10\"}}";
+            mockMvc.perform(MockMvcRequestBuilders.post("/rs/addRs")
+                    .contentType(MediaType.APPLICATION_JSON).content(rsJson2))
+                    .andExpect(jsonPath("$.error", is("invalid param")))
+                    .andExpect(status().isBadRequest());
+
+            String rsJson3 = "{\"name\":\"新增的事件\",\"keyword\":\"热干面\"}";
+            mockMvc.perform(MockMvcRequestBuilders.post("/rs/addRs")
+                    .contentType(MediaType.APPLICATION_JSON).content(rsJson3))
+                    .andExpect(jsonPath("$.error", is("invalid param")))
+                    .andExpect(status().isBadRequest());
+
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 

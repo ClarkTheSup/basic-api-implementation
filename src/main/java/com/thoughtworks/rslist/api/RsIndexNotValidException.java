@@ -1,8 +1,8 @@
 package com.thoughtworks.rslist.api;
 
-public class RsNotValidException extends RuntimeException {
+public class RsIndexNotValidException extends RuntimeException {
     private String message;
-    public RsNotValidException(String message) {
+    public RsIndexNotValidException(String message) {
         this.message = message;
     }
 
