@@ -16,8 +16,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -52,6 +51,7 @@ class RsListApplicationTests {
                     .andExpect(jsonPath("$", hasSize(3)))
                     .andExpect(jsonPath("$[0].name", is("第一条事件")))
                     .andExpect(jsonPath("$[0].keyword", is("猪肉")))
+                    .andExpect(jsonPath("$[0]", not(hasKey("user"))))
                     .andExpect(status().isOk());
         }catch (Exception e) {
             e.printStackTrace();
@@ -103,7 +103,7 @@ class RsListApplicationTests {
                     .andExpect(jsonPath("$[3].name", is("新增的事件")))
                     .andExpect(jsonPath("$[3].keyword", is("热干面")))
                     .andExpect(jsonPath("$[3].user", is(user)))
-                    .andExpect(status().isOk());
+                    .andExpect(status().isCreated());
         }catch (Exception e) {
             e.printStackTrace();
         }

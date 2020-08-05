@@ -2,6 +2,7 @@ package com.thoughtworks.rslist.api;
 
 import com.thoughtworks.rslist.model.Rs;
 import com.thoughtworks.rslist.model.User;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -25,16 +26,19 @@ public class RsController {
   }
 
   @GetMapping("/rs/list")
+  @ResponseStatus(HttpStatus.OK)
   public List<Rs> getRsListString() {
     return rsList;
   }
 
   @GetMapping("/rs/{index}")
+  @ResponseStatus(HttpStatus.OK)
   public Rs getRsString(@PathVariable int index) {
     return rsList.get(index-1);
   }
 
   @GetMapping("/rs/sublist")
+  @ResponseStatus(HttpStatus.OK)
   public List<Rs> getRsListBetweenString(@RequestParam(required = false) Integer start, @RequestParam Integer end) {
     if (start == null) {
       return rsList.subList(0, end-1);
@@ -44,6 +48,7 @@ public class RsController {
   }
 
   @PostMapping("/rs/addRs")
+  @ResponseStatus(HttpStatus.CREATED)
   public void addRsToList(@RequestBody @Valid Rs rs) {
     rsList.add(rs);
   }

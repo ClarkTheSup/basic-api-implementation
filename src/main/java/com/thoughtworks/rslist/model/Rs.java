@@ -39,10 +39,12 @@ public class Rs implements Serializable {
         this.keyword = keyword;
     }
 
+    @JsonIgnore
     public User getUser() {
         return user;
     }
 
+    @JsonProperty
     public void setUser(User user) {
         this.user = user;
     }
