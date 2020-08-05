@@ -11,12 +11,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MockMvcBuilder;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
@@ -94,11 +96,30 @@ public class UserControllerTest {
                 .contentType(MediaType.APPLICATION_JSON).content(userJson2))
                 .andExpect(header().string("index", "null"))
                 .andExpect(status().isCreated());
-        mockMvc.perform(get("/user/list"))
+        mockMvc.perform(get("/users"))
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].userName", is("clark")))
                 .andExpect(jsonPath("$[0].gender", is("男")))
                 .andExpect(status().isOk());
+
+    }
+
+    @Test
+    public void when_get_users_then_return_user_list() throws Exception{
+        String userJson1 = "{\"userName\":\"clark\",\"age\": 19,\"gender\": \"男\"," +
+                "\"email\": \"lkn@163.com\",\"phone\": \"11111111111\"," +
+                "\"voteNum\": \"10\"}";
+        mockMvc.perform(post("/user")
+                .contentType(MediaType.APPLICATION_JSON).content(userJson1))
+                .andExpect(header().string("index", "0"))
+                .andExpect(status().isCreated());
+        ResultActions resultActions = mockMvc.perform(get("/users"))
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(status().isOk());
+        resultActions.andReturn().getResponse().setCharacterEncoding("UTF-8");
+        //resultActions.andDo(print());
+        resultActions.andExpect(content().string("[{\"userName\":\"clark\",\"gender\":\"男\"," +
+                "\"age\":19,\"email\":\"lkn@163.com\",\"phone\":\"11111111111\",\"voteNum\":10}]"));
 
     }
 }
