@@ -18,6 +18,7 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.hasSize;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
@@ -88,10 +89,16 @@ class RsListApplicationTests {
     @Test
     public void given_one_Rs_then_add_into_list () {
         try {
+            ObjectMapper objectMapper = new ObjectMapper();
+
             User user = new User("jim", "男", 19, "jim@163.com",
                     "21111111111", 10);
+//            String userJson = objectMapper.writeValueAsString(user);
+//            mockMvc.perform(post("/user")
+//                    .contentType(MediaType.APPLICATION_JSON).content(userJson))
+//                    .andExpect(status().isOk());
+
             Rs rs = new Rs("新增的事件", "热干面", user);
-            ObjectMapper objectMapper = new ObjectMapper();
             String rsJson = objectMapper.writeValueAsString(rs);
             mockMvc.perform(MockMvcRequestBuilders.post("/rs/addRs")
                     .contentType(MediaType.APPLICATION_JSON).content(rsJson))

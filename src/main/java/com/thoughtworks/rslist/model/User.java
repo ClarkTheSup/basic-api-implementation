@@ -27,6 +27,11 @@ public class User {
         this.voteNum = voteNum;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        return this.userName.equals(((User) obj).getUserName());
+    }
+
     public String getUserName() {
         return userName;
     }
