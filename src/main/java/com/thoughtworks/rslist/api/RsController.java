@@ -1,10 +1,10 @@
 package com.thoughtworks.rslist.api;
 
 import com.thoughtworks.rslist.model.Rs;
+import com.thoughtworks.rslist.model.User;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -12,9 +12,15 @@ public class RsController {
   private List<Rs> rsList = new ArrayList<Rs>();
 
   {
-    rsList.add(new Rs("第一条事件", "猪肉"));
-    rsList.add(new Rs("第二条事件", "牛肉"));
-    rsList.add(new Rs("第三条事件", "羊肉"));
+    User user1 = new User("clark", "男", 19, "lkn@163.com",
+            "11111111111", 10);
+    User user2 = new User("jack", "女", 25, "jack@163.com",
+            "11111111112", 10);
+    User user3 = new User("amy", "男", 28, "amy@163.com",
+            "11111111113", 10);
+    rsList.add(new Rs("第一条事件", "猪肉", user1));
+    rsList.add(new Rs("第二条事件", "牛肉", user2));
+    rsList.add(new Rs("第三条事件", "羊肉", user3));
   }
 
   @GetMapping("/rs/list")

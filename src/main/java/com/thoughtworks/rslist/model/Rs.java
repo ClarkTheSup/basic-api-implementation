@@ -5,33 +5,38 @@ import java.io.Serializable;
 public class Rs implements Serializable {
     private String name;
     private String keyword;
+    private User user;
 
     public Rs() {
     }
 
-    public Rs(String name, String keyword) {
+    public Rs(String name, String keyword, User user) {
         this.name = name;
         this.keyword = keyword;
-    }
-
-    @Override
-    public String toString() {
-        return name + "-" + keyword;
+        this.user = user;
     }
 
     public String getName() {
         return name;
     }
 
-    public String getKeyword() {
-        return keyword;
-    }
-
     public void setName(String name) {
         this.name = name;
     }
 
+    public String getKeyword() {
+        return keyword;
+    }
+
     public void setKeyword(String keyword) {
         this.keyword = keyword;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }
