@@ -18,6 +18,7 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
@@ -94,17 +95,22 @@ class RsListApplicationTests {
             User user = new User("jim", "男", 19, "jim@163.com",
                     "21111111111", 10);
             Rs rs = new Rs("新增的事件", "热干面", user);
-            String rsJson = objectMapper.writeValueAsString(rs);
+            //String rsJson = objectMapper.writeValueAsString(rs);
+            String rsJson = "{\"name\":\"新增的事件\",\"keyword\":\"热干面\"," +
+                    "\"user\": {\"userName\":\"jim\",\"age\": 19,\"gender\": \"男\"," +
+                    "\"email\": \"jim@163.com\",\"phone\": \"21111111111\"," +
+                    "\"voteNum\": \"10\"}}";
             mockMvc.perform(MockMvcRequestBuilders.post("/rs/addRs")
                     .contentType(MediaType.APPLICATION_JSON).content(rsJson))
                     .andExpect(header().string("index", "3"))
                     .andExpect(status().isCreated());
             mockMvc.perform(MockMvcRequestBuilders.get("/rs/list"))
+                    .andDo(print())
                     .andExpect(jsonPath("$", hasSize(4)))
                     .andExpect(jsonPath("$[3].name", is("新增的事件")))
                     .andExpect(jsonPath("$[3].keyword", is("热干面")))
                     //.andExpect(jsonPath("$[3].user", is(user)))
-                    .andExpect(jsonPath("$[3]", hasKey("user")))
+                    .andExpect(jsonPath("$[3]", not(hasKey("user"))))
                     .andExpect(status().isOk());
         }catch (Exception e) {
             e.printStackTrace();
