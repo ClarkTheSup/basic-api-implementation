@@ -48,7 +48,9 @@ public class RsController {
   @PostMapping("/rs/addRs")
   public ResponseEntity addRsToList(@RequestBody @Valid Rs rs) {
     rsList.add(rs);
-    return ResponseEntity.created(null).build();
+    int index = rsList.indexOf(rs);
+    return ResponseEntity.status(HttpStatus.CREATED)
+            .header("index", String.valueOf(index)).build();
   }
 
   @PostMapping("/rs/modifyRs/{index}")

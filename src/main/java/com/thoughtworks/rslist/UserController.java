@@ -17,10 +17,13 @@ public class UserController {
 
     @PostMapping("/user")
     public ResponseEntity registerUser(@RequestBody @Valid User user) {
+        Integer index = null;
         if (!userList.contains(user)) {
             userList.add(user);
+            index = userList.indexOf(user);
         }
-        return ResponseEntity.created(null).build();
+        return ResponseEntity.created(null)
+                .header("index", String.valueOf(index)).build();
     }
 
     @GetMapping("/user/list")

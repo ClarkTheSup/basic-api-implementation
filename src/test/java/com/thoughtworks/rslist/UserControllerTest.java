@@ -14,8 +14,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -32,6 +31,7 @@ public class UserControllerTest {
         String userJson = objectMapper.writeValueAsString(user);
         mockMvc.perform(post("/user")
                 .contentType(MediaType.APPLICATION_JSON).content(userJson))
+                .andExpect(header().string("index", "0"))
                 .andExpect(status().isCreated());
     }
 
@@ -68,9 +68,11 @@ public class UserControllerTest {
         String userJson2 = objectMapper.writeValueAsString(user2);
         mockMvc.perform(post("/user")
                 .contentType(MediaType.APPLICATION_JSON).content(userJson1))
+                .andExpect(header().string("index", "0"))
                 .andExpect(status().isCreated());
         mockMvc.perform(post("/user")
                 .contentType(MediaType.APPLICATION_JSON).content(userJson2))
+                .andExpect(header().string("index", "null"))
                 .andExpect(status().isCreated());
         mockMvc.perform(get("/user/list"))
                 .andExpect(jsonPath("$", hasSize(1)))

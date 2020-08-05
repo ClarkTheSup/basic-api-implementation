@@ -97,6 +97,7 @@ class RsListApplicationTests {
             String rsJson = objectMapper.writeValueAsString(rs);
             mockMvc.perform(MockMvcRequestBuilders.post("/rs/addRs")
                     .contentType(MediaType.APPLICATION_JSON).content(rsJson))
+                    .andExpect(header().string("index", "3"))
                     .andExpect(status().isCreated());
             mockMvc.perform(MockMvcRequestBuilders.get("/rs/list"))
                     .andExpect(jsonPath("$", hasSize(4)))
