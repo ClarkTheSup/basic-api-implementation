@@ -185,19 +185,25 @@ class RsListApplicationTests {
             User user = new User("jim", "男", 19, "jim@163.com",
                     "21111111111", 10);
             Rs rs1 = new Rs(null, "热干面", user);
-            String rsJson1 = objectMapper.writeValueAsString(rs1);
+            String rsJson1 = "{\"keyword\":\"热干面\"," +
+                    "\"user\": {\"userName\":\"jim\",\"age\": 19,\"gender\": \"男\"," +
+                    "\"email\": \"jim@163.com\",\"phone\": \"21111111111\"," +
+                    "\"voteNum\": \"10\"}}";
             mockMvc.perform(MockMvcRequestBuilders.post("/rs/addRs")
                     .contentType(MediaType.APPLICATION_JSON).content(rsJson1))
                     .andExpect(status().isBadRequest());
 
             Rs rs2 = new Rs("新热搜", null, user);
-            String rsJson2 = objectMapper.writeValueAsString(rs2);
+            String rsJson2 = "{\"name\":\"新增的事件\"," +
+                    "\"user\": {\"userName\":\"jim\",\"age\": 19,\"gender\": \"男\"," +
+                    "\"email\": \"jim@163.com\",\"phone\": \"21111111111\"," +
+                    "\"voteNum\": \"10\"}}";
             mockMvc.perform(MockMvcRequestBuilders.post("/rs/addRs")
                     .contentType(MediaType.APPLICATION_JSON).content(rsJson2))
                     .andExpect(status().isBadRequest());
 
             Rs rs3 = new Rs("新热搜", "热干面", null);
-            String rsJson3 = objectMapper.writeValueAsString(rs3);
+            String rsJson3 = "{\"name\":\"新增的事件\",\"keyword\":\"热干面\"}";
             mockMvc.perform(MockMvcRequestBuilders.post("/rs/addRs")
                     .contentType(MediaType.APPLICATION_JSON).content(rsJson3))
                     .andExpect(status().isBadRequest());
