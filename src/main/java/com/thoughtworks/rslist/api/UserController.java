@@ -2,6 +2,8 @@ package com.thoughtworks.rslist.api;
 
 import com.thoughtworks.rslist.model.Error;
 import com.thoughtworks.rslist.model.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +15,7 @@ import java.util.List;
 @RestController
 public class UserController {
     private List<User> userList = new ArrayList<User>();
+    private Logger logger = LoggerFactory.getLogger(RsController.class);
 
     @PostMapping("/user")
     public ResponseEntity registerUser(@RequestBody @Valid User user){
@@ -33,7 +36,9 @@ public class UserController {
     @ExceptionHandler
     public ResponseEntity exceptionHandler(Exception e) {
         Error error = new Error();
-        error.setError("invalid user");
+        String message = "invalid user";
+        error.setError(message);
+        logger.error(message);
         return ResponseEntity.badRequest().body(error);
     }
 }

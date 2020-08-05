@@ -3,6 +3,8 @@ package com.thoughtworks.rslist.api;
 import com.thoughtworks.rslist.model.Error;
 import com.thoughtworks.rslist.model.Rs;
 import com.thoughtworks.rslist.model.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
@@ -15,6 +17,7 @@ import java.util.List;
 @RestController
 public class RsController {
   private List<Rs> rsList = new ArrayList<Rs>();
+  private Logger logger = LoggerFactory.getLogger(RsController.class);
 
   {
     User user1 = new User("clark", "男", 19, "lkn@163.com",
@@ -91,11 +94,15 @@ public class RsController {
   @ExceptionHandler
   public ResponseEntity handleException(Exception e) {
     Error error = new Error();
+    String message = null;
     if (e instanceof StartEndParamException || e instanceof RsIndexNotValidException) {
-      error.setError(e.getMessage());
+      message = e.getMessage();
+      error.setError(message);
     } else {
-      error.setError("invalid param");
+      message = "invalid param";
+      error.setError(message);
     }
+    logger.error(message);
     return ResponseEntity.badRequest().body(error);
   }
 
