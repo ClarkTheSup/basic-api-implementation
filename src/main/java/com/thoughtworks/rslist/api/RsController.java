@@ -1,5 +1,6 @@
 package com.thoughtworks.rslist.api;
 
+import com.thoughtworks.rslist.model.Error;
 import com.thoughtworks.rslist.model.Rs;
 import com.thoughtworks.rslist.model.User;
 import org.springframework.http.HttpStatus;
@@ -33,6 +34,9 @@ public class RsController {
 
   @GetMapping("/rs/{index}")
   public ResponseEntity getRsString(@PathVariable int index) {
+    if (index < 1 || index > rsList.size()) {
+      throw new RsNotValidException("invalid index");
+    }
     return ResponseEntity.ok(rsList.get(index-1));
   }
 
@@ -73,6 +77,13 @@ public class RsController {
   public ResponseEntity deleteRsInList(@PathVariable Integer index) {
     rsList.remove(index-1);
     return ResponseEntity.ok(null);
+  }
+
+  @ExceptionHandler
+  public ResponseEntity handleException(Exception e) {
+    Error error = new Error();
+    error.setError(e.getMessage());
+    return ResponseEntity.badRequest().body(error);
   }
 
 }

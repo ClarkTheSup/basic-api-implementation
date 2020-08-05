@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.Matchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -86,7 +87,7 @@ class RsListApplicationTests {
         }
     }
 
-    @Test
+    //@Test
     public void given_one_Rs_then_add_into_list () {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
@@ -103,7 +104,7 @@ class RsListApplicationTests {
                     .andExpect(jsonPath("$", hasSize(4)))
                     .andExpect(jsonPath("$[3].name", is("新增的事件")))
                     .andExpect(jsonPath("$[3].keyword", is("热干面")))
-                    //.andExpect(jsonPath("$[3].user", is(user)))
+                    //.andExpect(jsonPath("$[3].user").hasJsonPath(user))
                     .andExpect(jsonPath("$[3]", hasKey("user")))
                     .andExpect(status().isOk());
         }catch (Exception e) {
@@ -199,6 +200,14 @@ class RsListApplicationTests {
         }catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Test
+    public void given_out_of_bound_index_then_handle_exception() throws Exception {
+        mockMvc.perform(get("/rs/0"))
+                .andExpect(jsonPath("$.error", is("invalid index")))
+                .andExpect(status().isBadRequest());
+
     }
 
 
