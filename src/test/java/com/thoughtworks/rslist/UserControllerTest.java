@@ -1,16 +1,14 @@
 package com.thoughtworks.rslist;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.thoughtworks.rslist.api.UserController;
 import com.thoughtworks.rslist.model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MockMvcBuilder;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -121,5 +119,22 @@ public class UserControllerTest {
         resultActions.andExpect(content().string("[{\"userName\":\"clark\",\"gender\":\"男\"," +
                 "\"age\":19,\"email\":\"lkn@163.com\",\"phone\":\"11111111111\",\"voteNum\":10}]"));
 
+    }
+
+    @Test
+    public void given_incorrect_params_and_register_user_then_handle_exception() throws Exception{
+        String userJson1 = "{\"age\": 19,\"gender\": \"男\"," +
+                "\"email\": \"lkn@163.com\",\"phone\": \"11111111111\"," +
+                "\"voteNum\": \"10\"}";
+        String userJson2 = "{\"gender\": \"男\"," +
+                "\"email\": \"lkn@163.com\"}";
+        mockMvc.perform(post("/user")
+                .contentType(MediaType.APPLICATION_JSON).content(userJson1))
+                .andExpect(jsonPath("$.error", is("invalid user")))
+                .andExpect(status().isBadRequest());
+        mockMvc.perform(post("/user")
+                .contentType(MediaType.APPLICATION_JSON).content(userJson2))
+                .andExpect(jsonPath("$.error", is("invalid user")))
+                .andExpect(status().isBadRequest());
     }
 }
