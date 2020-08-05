@@ -4,6 +4,7 @@ import com.thoughtworks.rslist.model.Rs;
 import com.thoughtworks.rslist.model.User;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,7 +44,7 @@ public class RsController {
   }
 
   @PostMapping("/rs/addRs")
-  public void addRsToList(@RequestBody Rs rs) {
+  public void addRsToList(@RequestBody @Valid Rs rs) {
     rsList.add(rs);
   }
 

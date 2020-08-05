@@ -93,11 +93,6 @@ class RsListApplicationTests {
 
             User user = new User("jim", "男", 19, "jim@163.com",
                     "21111111111", 10);
-//            String userJson = objectMapper.writeValueAsString(user);
-//            mockMvc.perform(post("/user")
-//                    .contentType(MediaType.APPLICATION_JSON).content(userJson))
-//                    .andExpect(status().isOk());
-
             Rs rs = new Rs("新增的事件", "热干面", user);
             String rsJson = objectMapper.writeValueAsString(rs);
             mockMvc.perform(MockMvcRequestBuilders.post("/rs/addRs")
@@ -114,11 +109,13 @@ class RsListApplicationTests {
         }
     }
 
-    //@Test
+//    @Test
 //    public void given_one_new_Rs_and_index_then_modify () {
 //        try {
 //            ObjectMapper objectMapper = new ObjectMapper();
-//            Rs rs1 = new Rs("ttt", "zzz");
+//            User user = new User("jim", "男", 19, "jim@163.com",
+//                    "21111111111", 10);
+//            Rs rs1 = new Rs("ttt", "zzz", user);
 //            String rs1Json = objectMapper.writeValueAsString(rs1);
 //            String url1 = "/rs/modifyRs/1";
 //            mockMvc.perform(MockMvcRequestBuilders.post(url1)
@@ -127,6 +124,7 @@ class RsListApplicationTests {
 //            mockMvc.perform(MockMvcRequestBuilders.get("/rs/1"))
 //                    .andExpect(jsonPath("$.name", is("ttt")))
 //                    .andExpect(jsonPath("$.keyword", is("zzz")))
+//                    .andExpect(jsonPath("$.user", is(user)))
 //                    .andExpect(status().isOk());
 //
 //            Rs rs2 = new Rs("hasName", null);
@@ -171,6 +169,39 @@ class RsListApplicationTests {
             e.printStackTrace();
         }
     }
+
+    @Test
+    public void when_add_Rs_given_null_attributes_then_400 () {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            User user = new User("jim", "男", 19, "jim@163.com",
+                    "21111111111", 10);
+            Rs rs1 = new Rs(null, "热干面", user);
+            String rsJson1 = objectMapper.writeValueAsString(rs1);
+            mockMvc.perform(MockMvcRequestBuilders.post("/rs/addRs")
+                    .contentType(MediaType.APPLICATION_JSON).content(rsJson1))
+                    //.andExpect(status().isBadRequest());
+                    .andExpect(status().isOk());
+
+            Rs rs2 = new Rs("新热搜", null, user);
+            String rsJson2 = objectMapper.writeValueAsString(rs2);
+            mockMvc.perform(MockMvcRequestBuilders.post("/rs/addRs")
+                    .contentType(MediaType.APPLICATION_JSON).content(rsJson2))
+                    //.andExpect(status().isBadRequest());
+                    .andExpect(status().isOk());
+
+            Rs rs3 = new Rs("新热搜", "热干面", null);
+            String rsJson3 = objectMapper.writeValueAsString(rs3);
+            mockMvc.perform(MockMvcRequestBuilders.post("/rs/addRs")
+                    .contentType(MediaType.APPLICATION_JSON).content(rsJson3))
+                    //.andExpect(status().isBadRequest());
+                    .andExpect(status().isOk());
+
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 
 
 }

@@ -1,8 +1,9 @@
 package com.thoughtworks.rslist.model;
 
 import javax.validation.constraints.*;
+import java.io.Serializable;
 
-public class User {
+public class User implements Serializable {
     @NotNull
     @Size(max = 8)
     private String userName;
@@ -18,6 +19,8 @@ public class User {
     private String phone;
     private int voteNum = 10;
 
+    public User(){}
+
     public User(String userName, String gender, int age, String email, String phone, int voteNum) {
         this.userName = userName;
         this.gender = gender;
@@ -25,6 +28,13 @@ public class User {
         this.email = email;
         this.phone = phone;
         this.voteNum = voteNum;
+    }
+
+    @Override
+    public String toString() {
+        return "{userName="+userName+", " +
+                "gender="+gender+", age="+age+", " +
+                "email="+email+", phone="+phone+", voteNum="+voteNum+"}";
     }
 
     @Override
