@@ -41,25 +41,23 @@ public class RsController {
     rsList.add(rs);
   }
 
-  @PostMapping("/rs/modifyRs")
-  public void modifyRsInList(@RequestParam Integer index,
-                             @RequestParam(required = false) String name,
-                             @RequestParam(required = false) String keyword) {
-    if (name == null && keyword == null) {
+  @PostMapping("/rs/modifyRs/{index}")
+  public void modifyRsInList(@PathVariable Integer index, @RequestBody Rs rs) {
+    if (rs.getName() == null && rs.getKeyword() == null) {
       throw new RuntimeException("no new params");
     }
 
-    if (name != null) {
-      rsList.get(index-1).setName(name);
+    if (rs.getName() != null) {
+      rsList.get(index-1).setName(rs.getName());
     }
 
-    if (keyword != null) {
-      rsList.get(index-1).setKeyword(keyword);
+    if (rs.getKeyword() != null) {
+      rsList.get(index-1).setKeyword(rs.getKeyword());
     }
 
   }
 
-  @PostMapping("/rs/deleteRs/{index}")
+  @DeleteMapping("/rs/deleteRs/{index}")
   public void deleteRsInList(@PathVariable Integer index) {
     rsList.remove(index-1);
   }

@@ -100,22 +100,35 @@ class RsListApplicationTests {
     @Test
     public void given_one_new_Rs_and_index_then_modify () {
         try {
-            String url1 = "/rs/modifyRs?index=1&name=ttt&keyword=zzz";
-            mockMvc.perform(MockMvcRequestBuilders.post(url1)).andExpect(status().isOk());
+            ObjectMapper objectMapper = new ObjectMapper();
+            Rs rs1 = new Rs("ttt", "zzz");
+            String rs1Json = objectMapper.writeValueAsString(rs1);
+            String url1 = "/rs/modifyRs/1";
+            mockMvc.perform(MockMvcRequestBuilders.post(url1)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(rs1Json)).andExpect(status().isOk());
             mockMvc.perform(MockMvcRequestBuilders.get("/rs/1"))
                     .andExpect(jsonPath("$.name", is("ttt")))
                     .andExpect(jsonPath("$.keyword", is("zzz")))
                     .andExpect(status().isOk());
 
-            String url2 = "/rs/modifyRs?index=2&name=hasName";
-            mockMvc.perform(MockMvcRequestBuilders.post(url2)).andExpect(status().isOk());
+            Rs rs2 = new Rs("hasName", null);
+            String rs2Json = objectMapper.writeValueAsString(rs2);
+            String url2 = "/rs/modifyRs/2";
+            mockMvc.perform(MockMvcRequestBuilders.post(url2)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(rs2Json)).andExpect(status().isOk());
             mockMvc.perform(MockMvcRequestBuilders.get("/rs/2"))
                     .andExpect(jsonPath("$.name", is("hasName")))
                     .andExpect(jsonPath("$.keyword", is("牛肉")))
                     .andExpect(status().isOk());
 
-            String url3 = "/rs/modifyRs?index=3&keyword=hasKeyword";
-            mockMvc.perform(MockMvcRequestBuilders.post(url3)).andExpect(status().isOk());
+            Rs rs3 = new Rs(null, "hasKeyword");
+            String rs3Json = objectMapper.writeValueAsString(rs3);
+            String url3 = "/rs/modifyRs/3";
+            mockMvc.perform(MockMvcRequestBuilders.post(url3)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(rs3Json)).andExpect(status().isOk());
             mockMvc.perform(MockMvcRequestBuilders.get("/rs/3"))
                     .andExpect(jsonPath("$.name", is("第三条事件")))
                     .andExpect(jsonPath("$.keyword", is("hasKeyword")))
@@ -128,7 +141,7 @@ class RsListApplicationTests {
     @Test
     public void given_index_then_delete () {
         try {
-            mockMvc.perform(MockMvcRequestBuilders.post("/rs/deleteRs/2"))
+            mockMvc.perform(MockMvcRequestBuilders.delete("/rs/deleteRs/2"))
                     .andExpect(status().isOk());
             mockMvc.perform(MockMvcRequestBuilders.get("/rs/list"))
                     .andExpect(jsonPath("$", hasSize(2)))
