@@ -3,6 +3,7 @@ package com.thoughtworks.rslist.api;
 import com.thoughtworks.rslist.model.Rs;
 import com.thoughtworks.rslist.model.User;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -26,35 +27,32 @@ public class RsController {
   }
 
   @GetMapping("/rs/list")
-  @ResponseStatus(HttpStatus.OK)
-  public List<Rs> getRsListString() {
-    return rsList;
+  public ResponseEntity getRsListString() {
+    return ResponseEntity.ok(rsList);
   }
 
   @GetMapping("/rs/{index}")
-  @ResponseStatus(HttpStatus.OK)
-  public Rs getRsString(@PathVariable int index) {
-    return rsList.get(index-1);
+  public ResponseEntity getRsString(@PathVariable int index) {
+    return ResponseEntity.ok(rsList.get(index-1));
   }
 
   @GetMapping("/rs/sublist")
-  @ResponseStatus(HttpStatus.OK)
-  public List<Rs> getRsListBetweenString(@RequestParam(required = false) Integer start, @RequestParam Integer end) {
+  public ResponseEntity getRsListBetweenString(@RequestParam(required = false) Integer start, @RequestParam Integer end) {
     if (start == null) {
-      return rsList.subList(0, end-1);
+      return ResponseEntity.ok(rsList.subList(0, end-1));
     } else {
-      return rsList.subList(start-1, end-1);
+      return ResponseEntity.ok(rsList.subList(start-1, end-1));
     }
   }
 
   @PostMapping("/rs/addRs")
-  @ResponseStatus(HttpStatus.CREATED)
-  public void addRsToList(@RequestBody @Valid Rs rs) {
+  public ResponseEntity addRsToList(@RequestBody @Valid Rs rs) {
     rsList.add(rs);
+    return ResponseEntity.created(null).build();
   }
 
   @PostMapping("/rs/modifyRs/{index}")
-  public void modifyRsInList(@PathVariable Integer index, @RequestBody Rs rs) {
+  public ResponseEntity modifyRsInList(@PathVariable Integer index, @RequestBody Rs rs) {
     if (rs.getName() == null && rs.getKeyword() == null) {
       throw new RuntimeException("no new params");
     }
@@ -66,12 +64,13 @@ public class RsController {
     if (rs.getKeyword() != null) {
       rsList.get(index-1).setKeyword(rs.getKeyword());
     }
-
+    return ResponseEntity.created(null).build();
   }
 
   @DeleteMapping("/rs/deleteRs/{index}")
-  public void deleteRsInList(@PathVariable Integer index) {
+  public ResponseEntity deleteRsInList(@PathVariable Integer index) {
     rsList.remove(index-1);
+    return ResponseEntity.ok(null);
   }
 
 }

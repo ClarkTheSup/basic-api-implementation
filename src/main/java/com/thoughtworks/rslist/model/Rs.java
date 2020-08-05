@@ -39,7 +39,7 @@ public class Rs implements Serializable {
         this.keyword = keyword;
     }
 
-    @JsonIgnore
+    //@JsonIgnore
     public User getUser() {
         return user;
     }

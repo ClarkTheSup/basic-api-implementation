@@ -32,7 +32,7 @@ public class UserControllerTest {
         String userJson = objectMapper.writeValueAsString(user);
         mockMvc.perform(post("/user")
                 .contentType(MediaType.APPLICATION_JSON).content(userJson))
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
     }
 
     @Test
@@ -68,10 +68,10 @@ public class UserControllerTest {
         String userJson2 = objectMapper.writeValueAsString(user2);
         mockMvc.perform(post("/user")
                 .contentType(MediaType.APPLICATION_JSON).content(userJson1))
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
         mockMvc.perform(post("/user")
                 .contentType(MediaType.APPLICATION_JSON).content(userJson2))
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
         mockMvc.perform(get("/user/list"))
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].userName", is("clark")))
