@@ -43,8 +43,15 @@ public class RsController {
   @GetMapping("/rs/sublist")
   public ResponseEntity getRsListBetweenString(@RequestParam(required = false) Integer start, @RequestParam Integer end) {
     if (start == null) {
-      return ResponseEntity.ok(rsList.subList(0, end-1));
+      if (end > 0 && end <= rsList.size()) {
+        return ResponseEntity.ok(rsList.subList(0, end-1));
+      } else {
+        throw new StartEndParamException("invalid param");
+      }
     } else {
+      if (start < 0 || start > rsList.size() || end < 1 || end > rsList.size()+1) {
+        throw new StartEndParamException("invalid param");
+      }
       return ResponseEntity.ok(rsList.subList(start-1, end-1));
     }
   }

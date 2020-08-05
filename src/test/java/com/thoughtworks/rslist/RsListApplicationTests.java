@@ -222,6 +222,17 @@ class RsListApplicationTests {
 
     }
 
+    @Test
+    public void given_out_of_bound_start_and_end_then_handle_exception() throws Exception {
+        int start = -1;
+        int end = 9;
+        String url = "/rs/sublist?start=" + start + "&end=" + end ;
+        mockMvc.perform(get(url))
+                .andExpect(jsonPath("$.error", is("invalid param")))
+                .andExpect(status().isBadRequest());
+
+    }
+
 
 
 }
