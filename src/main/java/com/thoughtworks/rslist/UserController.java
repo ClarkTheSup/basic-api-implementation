@@ -1,6 +1,7 @@
 package com.thoughtworks.rslist;
 
 import com.thoughtworks.rslist.model.User;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,11 +23,11 @@ public class UserController {
             userList.add(user);
             index = userList.indexOf(user);
         }
-        return ResponseEntity.created(null)
+        return ResponseEntity.status(HttpStatus.CREATED)
                 .header("index", String.valueOf(index)).build();
     }
 
-    @GetMapping("/user/list")
+    @GetMapping("/users")
     public ResponseEntity getUserList() {
         return ResponseEntity.ok(userList);
     }

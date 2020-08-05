@@ -53,6 +53,7 @@ public class RsController {
   public ResponseEntity addRsToList(@RequestBody @Valid Rs rs) {
     rsList.add(rs);
     int index = rsList.indexOf(rs);
+    System.out.println(rs);
     return ResponseEntity.status(HttpStatus.CREATED)
             .header("index", String.valueOf(index)).build();
   }

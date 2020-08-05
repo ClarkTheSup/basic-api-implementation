@@ -3,32 +3,44 @@ package com.thoughtworks.rslist;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.rslist.model.User;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MockMvcBuilder;
+import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 public class UserControllerTest {
 
-    @Autowired
     MockMvc mockMvc;
+
+    @BeforeEach
+    public void beforeEach() {
+        mockMvc = MockMvcBuilders.standaloneSetup(new UserController()).build();
+    }
 
     @Test
     public void should_register_user() throws Exception {
         User user = new User("clark", "男", 19, "lkn@163.com",
                 "11111111111", 10);
         ObjectMapper objectMapper = new ObjectMapper();
-        String userJson = objectMapper.writeValueAsString(user);
+        //String userJson = objectMapper.writeValueAsString(user);
+        String userJson = "{\"userName\":\"clark\",\"age\": 19,\"gender\": \"男\"," +
+                "\"email\": \"lkn@163.com\",\"phone\": \"11111111111\"," +
+                "\"voteNum\": \"10\"}";
         mockMvc.perform(post("/user")
                 .contentType(MediaType.APPLICATION_JSON).content(userJson))
                 .andExpect(header().string("index", "0"))
@@ -40,7 +52,10 @@ public class UserControllerTest {
         User user = new User("clark", "男", 19, "lkn@163.com",
                 "11111", 10);
         ObjectMapper objectMapper = new ObjectMapper();
-        String userJson = objectMapper.writeValueAsString(user);
+        //String userJson = objectMapper.writeValueAsString(user);
+        String userJson = "{\"userName\":\"clark\",\"age\": 19,\"gender\": \"男\"," +
+                "\"email\": \"lkn@163.com\",\"phone\": \"11111\"," +
+                "\"voteNum\": \"10\"}";
         mockMvc.perform(post("/user")
                 .contentType(MediaType.APPLICATION_JSON).content(userJson))
                 .andExpect(status().isBadRequest());
@@ -51,7 +66,10 @@ public class UserControllerTest {
         User user = new User("clark", "男", 19, "lkn.com",
                 "11111111111", 10);
         ObjectMapper objectMapper = new ObjectMapper();
-        String userJson = objectMapper.writeValueAsString(user);
+        //String userJson = objectMapper.writeValueAsString(user);
+        String userJson = "{\"userName\":\"clark\",\"age\": 19,\"gender\": \"男\"," +
+                "\"email\": \"lkn.com\",\"phone\": \"11111\"," +
+                "\"voteNum\": \"10\"}";
         mockMvc.perform(post("/user")
                 .contentType(MediaType.APPLICATION_JSON).content(userJson))
                 .andExpect(status().isBadRequest());
@@ -64,8 +82,12 @@ public class UserControllerTest {
         User user2 = new User("clark", "女", 25, "lkn@163.com",
                 "11111111111", 10);
         ObjectMapper objectMapper = new ObjectMapper();
-        String userJson1 = objectMapper.writeValueAsString(user1);
-        String userJson2 = objectMapper.writeValueAsString(user2);
+        String userJson1 = "{\"userName\":\"clark\",\"age\": 19,\"gender\": \"男\"," +
+                "\"email\": \"lkn@163.com\",\"phone\": \"11111111111\"," +
+                "\"voteNum\": \"10\"}";
+        String userJson2 = "{\"userName\":\"clark\",\"age\": 19,\"gender\": \"男\"," +
+                "\"email\": \"lkn@163.com\",\"phone\": \"11111111111\"," +
+                "\"voteNum\": \"10\"}";
         mockMvc.perform(post("/user")
                 .contentType(MediaType.APPLICATION_JSON).content(userJson1))
                 .andExpect(header().string("index", "0"))
@@ -74,11 +96,30 @@ public class UserControllerTest {
                 .contentType(MediaType.APPLICATION_JSON).content(userJson2))
                 .andExpect(header().string("index", "null"))
                 .andExpect(status().isCreated());
-        mockMvc.perform(get("/user/list"))
+        mockMvc.perform(get("/users"))
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].userName", is("clark")))
                 .andExpect(jsonPath("$[0].gender", is("男")))
                 .andExpect(status().isOk());
+
+    }
+
+    @Test
+    public void when_get_users_then_return_user_list() throws Exception{
+        String userJson1 = "{\"userName\":\"clark\",\"age\": 19,\"gender\": \"男\"," +
+                "\"email\": \"lkn@163.com\",\"phone\": \"11111111111\"," +
+                "\"voteNum\": \"10\"}";
+        mockMvc.perform(post("/user")
+                .contentType(MediaType.APPLICATION_JSON).content(userJson1))
+                .andExpect(header().string("index", "0"))
+                .andExpect(status().isCreated());
+        ResultActions resultActions = mockMvc.perform(get("/users"))
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(status().isOk());
+        resultActions.andReturn().getResponse().setCharacterEncoding("UTF-8");
+        //resultActions.andDo(print());
+        resultActions.andExpect(content().string("[{\"userName\":\"clark\",\"gender\":\"男\"," +
+                "\"age\":19,\"email\":\"lkn@163.com\",\"phone\":\"11111111111\",\"voteNum\":10}]"));
 
     }
 }
