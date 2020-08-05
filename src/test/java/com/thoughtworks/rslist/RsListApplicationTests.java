@@ -51,7 +51,7 @@ class RsListApplicationTests {
                     .andExpect(jsonPath("$", hasSize(3)))
                     .andExpect(jsonPath("$[0].name", is("第一条事件")))
                     .andExpect(jsonPath("$[0].keyword", is("猪肉")))
-                    .andExpect(jsonPath("$[0]", hasKey("user")))
+                    .andExpect(jsonPath("$[0]", not(hasKey("user"))))
                     .andExpect(status().isOk());
         }catch (Exception e) {
             e.printStackTrace();

@@ -2,6 +2,8 @@ package com.thoughtworks.rslist.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.NullSerializer;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -39,7 +41,9 @@ public class Rs implements Serializable {
         this.keyword = keyword;
     }
 
-    //@JsonIgnore
+    //@JsonProperty
+    //@JsonSerialize(using= NullSerializer.class)
+    @JsonIgnore
     public User getUser() {
         return user;
     }
