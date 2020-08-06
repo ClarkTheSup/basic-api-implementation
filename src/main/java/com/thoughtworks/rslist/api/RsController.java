@@ -1,12 +1,15 @@
 package com.thoughtworks.rslist.api;
 
+import com.thoughtworks.rslist.dto.RsDto;
 import com.thoughtworks.rslist.exception.RsIndexNotValidException;
 import com.thoughtworks.rslist.exception.StartEndParamException;
 import com.thoughtworks.rslist.domain.Error;
 import com.thoughtworks.rslist.domain.Rs;
 import com.thoughtworks.rslist.domain.User;
+import com.thoughtworks.rslist.repository.RsRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +22,8 @@ import java.util.List;
 public class RsController {
   private List<Rs> rsList = new ArrayList<Rs>();
   private Logger logger = LoggerFactory.getLogger(RsController.class);
+  @Autowired
+  private RsRepository rsRepository;
 
   {
     User user1 = new User("clark", "男", 19, "lkn@163.com",
@@ -27,14 +32,14 @@ public class RsController {
             "11111111112", 10);
     User user3 = new User("amy", "男", 28, "amy@163.com",
             "11111111113", 10);
-    rsList.add(new Rs("第一条事件", "猪肉", user1));
-    rsList.add(new Rs("第二条事件", "牛肉", user2));
-    rsList.add(new Rs("第三条事件", "羊肉", user3));
+    rsList.add(new Rs("第一条事件", "猪肉", 1));
+    rsList.add(new Rs("第二条事件", "牛肉", 2));
+    rsList.add(new Rs("第三条事件", "羊肉", 3));
   }
 
   @GetMapping("/rs/list")
   public ResponseEntity getRsListString() {
-    return ResponseEntity.ok(rsList);
+    return ResponseEntity.ok(rsRepository.findAll());
   }
 
   @GetMapping("/rs/{index}")
@@ -62,12 +67,10 @@ public class RsController {
   }
 
   @PostMapping("/rs/addRs")
-  public ResponseEntity addRsToList(@RequestBody @Valid Rs rs) {
-    rsList.add(rs);
-    int index = rsList.indexOf(rs);
-    System.out.println(rs);
-    return ResponseEntity.status(HttpStatus.CREATED)
-            .header("index", String.valueOf(index)).build();
+  public ResponseEntity addRs(@RequestBody @Valid Rs rs) {
+    RsDto rsDto = RsDto.builder().name(rs.getName()).keyword(rs.getKeyword()).userId(rs.getUserId()).build();
+    rsRepository.save(rsDto);
+    return ResponseEntity.status(HttpStatus.CREATED).build();
   }
 
   @PostMapping("/rs/modifyRs/{index}")

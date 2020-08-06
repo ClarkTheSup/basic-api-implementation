@@ -12,15 +12,12 @@ public class Rs implements Serializable {
     @NotNull
     private String keyword;
     @NotNull
-    private User user;
+    private int userId;
 
-    public Rs() {
-    }
-
-    public Rs(String name, String keyword, User user) {
+    public Rs(@NotNull String name, @NotNull String keyword, @NotNull int userId) {
         this.name = name;
         this.keyword = keyword;
-        this.user = user;
+        this.userId = userId;
     }
 
     public String getName() {
@@ -39,15 +36,11 @@ public class Rs implements Serializable {
         this.keyword = keyword;
     }
 
-    //@JsonProperty
-    //@JsonSerialize(using= NullSerializer.class)
-    @JsonIgnore
-    public User getUser() {
-        return user;
+    public int getUserId() {
+        return userId;
     }
 
-    @JsonProperty
-    public void setUser(User user) {
-        this.user = user;
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 }
