@@ -95,7 +95,7 @@ public class RsController {
   public ResponseEntity handleException(Exception e) {
     Error error = new Error();
     String message = null;
-    if (e instanceof StartEndParamException || e instanceof RsIndexNotValidException) {
+    if(e instanceof StartEndParamException || e instanceof RsIndexNotValidException) {
       message = e.getMessage();
       error.setError(message);
     } else {
