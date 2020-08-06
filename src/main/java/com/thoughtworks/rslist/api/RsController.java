@@ -1,6 +1,8 @@
 package com.thoughtworks.rslist.api;
 
+import com.thoughtworks.rslist.domain.Vote;
 import com.thoughtworks.rslist.dto.RsDto;
+import com.thoughtworks.rslist.dto.VoteDto;
 import com.thoughtworks.rslist.exception.RsIndexNotValidException;
 import com.thoughtworks.rslist.exception.StartEndParamException;
 import com.thoughtworks.rslist.domain.Error;
@@ -8,10 +10,12 @@ import com.thoughtworks.rslist.domain.Rs;
 import com.thoughtworks.rslist.domain.User;
 import com.thoughtworks.rslist.repository.RsRepository;
 import com.thoughtworks.rslist.repository.UserRepository;
+import com.thoughtworks.rslist.repository.VoteRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,6 +31,8 @@ public class RsController {
   private RsRepository rsRepository;
   @Autowired
   private UserRepository userRepository;
+  @Autowired
+  private VoteRepository voteRepository;
 
   {
     User user1 = new User("clark", "男", 19, "lkn@163.com",
@@ -100,6 +106,14 @@ public class RsController {
   public ResponseEntity deleteRsInList(@PathVariable Integer index) {
     rsList.remove(index-1);
     return ResponseEntity.ok(null);
+  }
+
+  @PostMapping("/rs/vote/{rsEventId}")
+  public ResponseEntity vote(@RequestBody Vote vote) {
+    VoteDto voteDto = VoteDto.builder().voteNum(vote.getVoteNum())
+            .userId(vote.getUserId()).voteTime(vote.getVoteTime()).build();
+    voteRepository.save(voteDto);
+    return ResponseEntity.status(HttpStatus.CREATED).build();
   }
 
   @ExceptionHandler

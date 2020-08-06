@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/rssystem?useSSL=false
+    url: jdbc:mysql://localhost:3306/rssystem?serverTimezone=GMT&useSSL=false
     username : root
     password : root
   jpa:

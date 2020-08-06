@@ -1,9 +1,11 @@
 package com.thoughtworks.rslist;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.rslist.api.RsController;
 import com.thoughtworks.rslist.domain.Rs;
 import com.thoughtworks.rslist.domain.User;
+import com.thoughtworks.rslist.domain.Vote;
 import com.thoughtworks.rslist.dto.UserDto;
 import com.thoughtworks.rslist.repository.RsRepository;
 import com.thoughtworks.rslist.repository.UserRepository;
@@ -102,7 +104,7 @@ class RsListApplicationTests {
         mockMvc.perform(get("/users")).andExpect(status().isOk());
     }
 
-    @Test
+    //@Test
     @Order(3)
     public void when_delete_user_then_delete_rs_cascadly() throws Exception {
         String rsJson1 = "{\"name\": \"猪肉涨价了\"," +
@@ -120,5 +122,16 @@ class RsListApplicationTests {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(0)));
     }
+
+    @Test
+    @Order(4)
+    public void when_vote_then_add_to_database() throws Exception {
+        Vote vote = new Vote(5, 1, "2020-10-01:15:50:21");
+        ObjectMapper objectMapper = new ObjectMapper();
+        String voteJson = objectMapper.writeValueAsString(vote);
+        mockMvc.perform(post("/rs/vote/1").contentType(MediaType.APPLICATION_JSON)
+                .content(voteJson)).andExpect(status().isCreated());
+    }
+
 
 }
