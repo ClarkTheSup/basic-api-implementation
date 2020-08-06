@@ -1,6 +1,7 @@
 package com.thoughtworks.rslist;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.rslist.model.User;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,10 +38,7 @@ public class UserControllerTest {
         User user = new User("clark", "男", 19, "lkn@163.com",
                 "11111111111", 10);
         ObjectMapper objectMapper = new ObjectMapper();
-        //String userJson = objectMapper.writeValueAsString(user);
-        String userJson = "{\"userName\":\"clark\",\"age\": 19,\"gender\": \"男\"," +
-                "\"email\": \"lkn@163.com\",\"phone\": \"11111111111\"," +
-                "\"voteNum\": \"10\"}";
+        String userJson = objectMapper.writeValueAsString(user);
         mockMvc.perform(post("/user")
                 .contentType(MediaType.APPLICATION_JSON).content(userJson))
                 .andExpect(header().string("index", "0"))
@@ -82,12 +80,9 @@ public class UserControllerTest {
         User user2 = new User("clark", "女", 25, "lkn@163.com",
                 "11111111111", 10);
         ObjectMapper objectMapper = new ObjectMapper();
-        String userJson1 = "{\"userName\":\"clark\",\"age\": 19,\"gender\": \"男\"," +
-                "\"email\": \"lkn@163.com\",\"phone\": \"11111111111\"," +
-                "\"voteNum\": \"10\"}";
-        String userJson2 = "{\"userName\":\"clark\",\"age\": 19,\"gender\": \"男\"," +
-                "\"email\": \"lkn@163.com\",\"phone\": \"11111111111\"," +
-                "\"voteNum\": \"10\"}";
+        //objectMapper.configure(MapperFeature.USE_ANNOTATIONS, false);
+        String userJson1 = objectMapper.writeValueAsString(user1);
+        String userJson2 = objectMapper.writeValueAsString(user2);
         mockMvc.perform(post("/user")
                 .contentType(MediaType.APPLICATION_JSON).content(userJson1))
                 .andExpect(header().string("index", "0"))
@@ -98,28 +93,30 @@ public class UserControllerTest {
                 .andExpect(status().isCreated());
         mockMvc.perform(get("/users"))
                 .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].userName", is("clark")))
-                .andExpect(jsonPath("$[0].gender", is("男")))
+                //.andExpect(jsonPath("$[0].userName", is("clark")))
+                //.andExpect(jsonPath("$[0].gender", is("男")))
+                .andExpect(jsonPath("$[0].user_name", is("clark")))
+                .andExpect(jsonPath("$[0].user_gender", is("男")))
                 .andExpect(status().isOk());
 
     }
 
     @Test
     public void when_get_users_then_return_user_list() throws Exception{
-        String userJson1 = "{\"userName\":\"clark\",\"age\": 19,\"gender\": \"男\"," +
-                "\"email\": \"lkn@163.com\",\"phone\": \"11111111111\"," +
-                "\"voteNum\": \"10\"}";
+        User user = new User("clark",  "男", 19, "lkn@163.com", "11111111111", 10);
+        ObjectMapper objectMapper = new ObjectMapper();
+        //objectMapper.configure(MapperFeature.USE_ANNOTATIONS, false);
+        String userJson1 = objectMapper.writeValueAsString(user);
         mockMvc.perform(post("/user")
                 .contentType(MediaType.APPLICATION_JSON).content(userJson1))
-                .andExpect(header().string("index", "0"))
                 .andExpect(status().isCreated());
         ResultActions resultActions = mockMvc.perform(get("/users"))
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(status().isOk());
         resultActions.andReturn().getResponse().setCharacterEncoding("UTF-8");
         //resultActions.andDo(print());
-        resultActions.andExpect(content().string("[{\"userName\":\"clark\",\"gender\":\"男\"," +
-                "\"age\":19,\"email\":\"lkn@163.com\",\"phone\":\"11111111111\",\"voteNum\":10}]"));
-
+        resultActions.andExpect(content().string("[{\"user_name\":\"clark\"," +
+                "\"user_gender\":\"男\"," + "\"user_age\":19,\"user_email\":\"lkn@163.com\"," +
+                "\"user_phone\":\"11111111111\",\"user_voteNum\":10}]"));
     }
 }
