@@ -7,6 +7,7 @@ import com.thoughtworks.rslist.domain.Error;
 import com.thoughtworks.rslist.domain.Rs;
 import com.thoughtworks.rslist.domain.User;
 import com.thoughtworks.rslist.repository.RsRepository;
+import com.thoughtworks.rslist.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,8 @@ public class RsController {
   private Logger logger = LoggerFactory.getLogger(RsController.class);
   @Autowired
   private RsRepository rsRepository;
+  @Autowired
+  private UserRepository userRepository;
 
   {
     User user1 = new User("clark", "男", 19, "lkn@163.com",
@@ -68,6 +71,10 @@ public class RsController {
 
   @PostMapping("/rs/addRs")
   public ResponseEntity addRs(@RequestBody @Valid Rs rs) {
+    if(userRepository.findUserById(rs.getUserId()) == null){
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+    }
+
     RsDto rsDto = RsDto.builder().name(rs.getName()).keyword(rs.getKeyword()).userId(rs.getUserId()).build();
     rsRepository.save(rsDto);
     return ResponseEntity.status(HttpStatus.CREATED).build();
