@@ -47,10 +47,10 @@ public class UserControllerTest {
         User user = new User("clark", "男", 19, "lkn@163.com",
                 "11111", 10);
         ObjectMapper objectMapper = new ObjectMapper();
-        //String userJson = objectMapper.writeValueAsString(user);
-        String userJson = "{\"userName\":\"clark\",\"age\": 19,\"gender\": \"男\"," +
-                "\"email\": \"lkn@163.com\",\"phone\": \"11111\"," +
-                "\"voteNum\": \"10\"}";
+        String userJson = objectMapper.writeValueAsString(user);
+//        String userJson = "{\"userName\":\"clark\",\"age\": 19,\"gender\": \"男\"," +
+//                "\"email\": \"lkn@163.com\",\"phone\": \"11111\"," +
+//                "\"voteNum\": \"10\"}";
         mockMvc.perform(post("/user")
                 .contentType(MediaType.APPLICATION_JSON).content(userJson))
                 .andExpect(status().isBadRequest());
@@ -61,10 +61,10 @@ public class UserControllerTest {
         User user = new User("clark", "男", 19, "lkn.com",
                 "11111111111", 10);
         ObjectMapper objectMapper = new ObjectMapper();
-        //String userJson = objectMapper.writeValueAsString(user);
-        String userJson = "{\"userName\":\"clark\",\"age\": 19,\"gender\": \"男\"," +
-                "\"email\": \"lkn.com\",\"phone\": \"11111\"," +
-                "\"voteNum\": \"10\"}";
+        String userJson = objectMapper.writeValueAsString(user);
+//        String userJson = "{\"userName\":\"clark\",\"age\": 19,\"gender\": \"男\"," +
+//                "\"email\": \"lkn.com\",\"phone\": \"11111\"," +
+//                "\"voteNum\": \"10\"}";
         mockMvc.perform(post("/user")
                 .contentType(MediaType.APPLICATION_JSON).content(userJson))
                 .andExpect(status().isBadRequest());
@@ -119,17 +119,12 @@ public class UserControllerTest {
 
     @Test
     public void given_incorrect_params_and_register_user_then_handle_exception() throws Exception{
-        String userJson1 = "{\"age\": 19,\"gender\": \"男\"," +
-                "\"email\": \"lkn@163.com\",\"phone\": \"11111111111\"," +
-                "\"voteNum\": \"10\"}";
-        String userJson2 = "{\"gender\": \"男\"," +
-                "\"email\": \"lkn@163.com\"}";
+        User user1 = new User(null,"男", 19,
+                "lkn@163.com", "11111111111", 10);
+        ObjectMapper objectMapper = new ObjectMapper();
+        String userJson1 = objectMapper.writeValueAsString(user1);
         mockMvc.perform(post("/user")
                 .contentType(MediaType.APPLICATION_JSON).content(userJson1))
-                .andExpect(jsonPath("$.error", is("invalid user")))
-                .andExpect(status().isBadRequest());
-        mockMvc.perform(post("/user")
-                .contentType(MediaType.APPLICATION_JSON).content(userJson2))
                 .andExpect(jsonPath("$.error", is("invalid user")))
                 .andExpect(status().isBadRequest());
     }
