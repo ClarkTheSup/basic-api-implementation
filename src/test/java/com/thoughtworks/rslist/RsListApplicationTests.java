@@ -109,6 +109,29 @@ class RsListApplicationTests {
         }
     }
 
+    //@Test
+    public void given_null_user_then_add_into_list () {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+
+            User user = new User("jim", "男", 19, "jim@163.com",
+                    "21111111111", 10);
+            Rs rs = new Rs("新增的事件", "热干面", user);
+            String rsJson = objectMapper.writeValueAsString(rs);
+            mockMvc.perform(MockMvcRequestBuilders.post("/rs/addRs")
+                    .contentType(MediaType.APPLICATION_JSON).content(rsJson))
+                    .andExpect(status().isOk());
+            mockMvc.perform(MockMvcRequestBuilders.post("/rs/addRs")
+                    .contentType(MediaType.APPLICATION_JSON).content(rsJson))
+                    .andExpect(status().isOk());
+            mockMvc.perform(MockMvcRequestBuilders.get("/user"))
+                    .andExpect(jsonPath("$", hasSize(1)))
+                    .andExpect(status().isOk());
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 //    @Test
 //    public void given_one_new_Rs_and_index_then_modify () {
 //        try {

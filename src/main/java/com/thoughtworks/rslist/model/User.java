@@ -39,6 +39,7 @@ public class User implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
+
         return this.userName.equals(((User) obj).getUserName());
     }
 
