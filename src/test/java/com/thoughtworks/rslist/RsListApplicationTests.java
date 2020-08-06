@@ -71,8 +71,8 @@ class RsListApplicationTests {
     @Order(1)
     public void should_add_rs_to_database() throws Exception {
         String rsJson = "{\"name\": \"猪肉涨价了\"," +
-                            "\"keyword\": \"猪\"," +
-                            "\"userId\": \"1\"}";
+                "\"keyword\": \"猪\"," +
+                "\"userId\": \"1\"}";
         mockMvc.perform(post("/rs/addRs").contentType(MediaType.APPLICATION_JSON)
                 .content(rsJson)).andExpect(status().isCreated());
         mockMvc.perform(get("/rs/list"))
@@ -157,5 +157,6 @@ class RsListApplicationTests {
                 .andExpect(jsonPath("$.keyword", is("猪")));
     }
 
-
 }
+
+
