@@ -10,3 +10,15 @@
 2020-08-05 21:08:52.759 ERROR 22556 --- [Test worker] c.thoughtworks.rslist.api.RsController   : invalid param
 2020-08-05 21:08:52.762 ERROR 22556 --- [Test worker] c.thoughtworks.rslist.api.RsController   : invalid param
 2020-08-05 21:08:52.975 ERROR 22556 --- [Test worker] c.thoughtworks.rslist.api.RsController   : invalid request param
+2020-08-06 13:04:16.101 ERROR 13432 --- [Test worker] c.thoughtworks.rslist.api.RsController   : invalid user
+2020-08-06 13:04:16.146 ERROR 13432 --- [Test worker] c.thoughtworks.rslist.api.RsController   : invalid user
+2020-08-06 13:04:16.267 ERROR 13432 --- [Test worker] c.thoughtworks.rslist.api.RsController   : invalid user
+2020-08-06 13:04:16.298 ERROR 13432 --- [Test worker] c.thoughtworks.rslist.api.RsController   : invalid user
+2020-08-06 13:04:26.489 ERROR 18180 --- [Test worker] c.thoughtworks.rslist.api.RsController   : invalid param
+2020-08-06 13:04:26.493 ERROR 18180 --- [Test worker] c.thoughtworks.rslist.api.RsController   : invalid param
+2020-08-06 13:04:26.496 ERROR 18180 --- [Test worker] c.thoughtworks.rslist.api.RsController   : invalid param
+2020-08-06 13:04:26.518 ERROR 18180 --- [Test worker] c.thoughtworks.rslist.api.RsController   : invalid index
+2020-08-06 13:04:26.582 ERROR 18180 --- [Test worker] c.thoughtworks.rslist.api.RsController   : invalid param
+2020-08-06 13:04:26.584 ERROR 18180 --- [Test worker] c.thoughtworks.rslist.api.RsController   : invalid param
+2020-08-06 13:04:26.587 ERROR 18180 --- [Test worker] c.thoughtworks.rslist.api.RsController   : invalid param
+2020-08-06 13:04:26.744 ERROR 18180 --- [Test worker] c.thoughtworks.rslist.api.RsController   : invalid request param

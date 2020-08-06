@@ -72,7 +72,7 @@ class RsListApplicationTests {
         }
     }
 
-   
+
     @Test
     public void given_out_of_bound_start_and_end_then_handle_exception() throws Exception {
         int start = -1;
