@@ -1,7 +1,7 @@
 package com.thoughtworks.rslist.api;
 
-import com.thoughtworks.rslist.model.Error;
-import com.thoughtworks.rslist.model.User;
+import com.thoughtworks.rslist.domain.Error;
+import com.thoughtworks.rslist.domain.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;

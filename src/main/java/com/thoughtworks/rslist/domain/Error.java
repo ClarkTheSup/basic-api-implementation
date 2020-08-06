@@ -1,6 +1,4 @@
-package com.thoughtworks.rslist.model;
-
-import lombok.Data;
+package com.thoughtworks.rslist.domain;
 
 public class Error{
     private String error;

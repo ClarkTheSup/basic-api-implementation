@@ -1,4 +1,4 @@
-package com.thoughtworks.rslist.model;
+package com.thoughtworks.rslist.domain;
 
 import javax.validation.constraints.*;
 import java.io.Serializable;

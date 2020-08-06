@@ -1,4 +1,4 @@
-package com.thoughtworks.rslist.api;
+package com.thoughtworks.rslist.exception;
 
 public class RsNotValidParamException extends RuntimeException{
     private String message;
