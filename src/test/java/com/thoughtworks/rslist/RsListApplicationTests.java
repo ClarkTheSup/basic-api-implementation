@@ -73,58 +73,6 @@ class RsListApplicationTests {
     }
 
     @Test
-    public void given_index_then_delete () {
-        try {
-            mockMvc.perform(MockMvcRequestBuilders.delete("/rs/deleteRs/2"))
-                    .andExpect(status().isOk());
-            mockMvc.perform(MockMvcRequestBuilders.get("/rs/list"))
-                    .andExpect(jsonPath("$", hasSize(2)))
-                    .andExpect(jsonPath("$[0].name", is("第一条事件")))
-                    .andExpect(jsonPath("$[0].keyword", is("猪肉")))
-                    .andExpect(jsonPath("$[1].name", is("第三条事件")))
-                    .andExpect(jsonPath("$[1].keyword", is("羊肉")))
-                    .andExpect(status().isOk());
-        }catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Test
-    public void when_add_Rs_given_null_attributes_then_400 () {
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            User user = new User("jim", "男", 19, "jim@163.com",
-                    "21111111111", 10);
-            Rs rs1 = new Rs(null, "热干面", user);
-            String rsJson1 = "{\"keyword\":\"热干面\"," +
-                    "\"user\": {\"userName\":\"jim\",\"age\": 19,\"gender\": \"男\"," +
-                    "\"email\": \"jim@163.com\",\"phone\": \"21111111111\"," +
-                    "\"voteNum\": \"10\"}}";
-            mockMvc.perform(MockMvcRequestBuilders.post("/rs/addRs")
-                    .contentType(MediaType.APPLICATION_JSON).content(rsJson1))
-                    .andExpect(status().isBadRequest());
-
-            Rs rs2 = new Rs("新热搜", null, user);
-            String rsJson2 = "{\"name\":\"新增的事件\"," +
-                    "\"user\": {\"userName\":\"jim\",\"age\": 19,\"gender\": \"男\"," +
-                    "\"email\": \"jim@163.com\",\"phone\": \"21111111111\"," +
-                    "\"voteNum\": \"10\"}}";
-            mockMvc.perform(MockMvcRequestBuilders.post("/rs/addRs")
-                    .contentType(MediaType.APPLICATION_JSON).content(rsJson2))
-                    .andExpect(status().isBadRequest());
-
-            Rs rs3 = new Rs("新热搜", "热干面", null);
-            String rsJson3 = "{\"name\":\"新增的事件\",\"keyword\":\"热干面\"}";
-            mockMvc.perform(MockMvcRequestBuilders.post("/rs/addRs")
-                    .contentType(MediaType.APPLICATION_JSON).content(rsJson3))
-                    .andExpect(status().isBadRequest());
-
-        }catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Test
     public void given_out_of_bound_start_and_end_then_handle_exception() throws Exception {
         int start = -1;
         int end = 9;
@@ -186,6 +134,58 @@ class RsListApplicationTests {
                     .andExpect(jsonPath("$[0].name", is("第一条事件")))
                     .andExpect(jsonPath("$[0].keyword", is("猪肉")))
                     .andExpect(status().isOk());
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void given_index_then_delete () {
+        try {
+            mockMvc.perform(MockMvcRequestBuilders.delete("/rs/deleteRs/2"))
+                    .andExpect(status().isOk());
+            mockMvc.perform(MockMvcRequestBuilders.get("/rs/list"))
+                    .andExpect(jsonPath("$", hasSize(2)))
+                    .andExpect(jsonPath("$[0].name", is("第一条事件")))
+                    .andExpect(jsonPath("$[0].keyword", is("猪肉")))
+                    .andExpect(jsonPath("$[1].name", is("第三条事件")))
+                    .andExpect(jsonPath("$[1].keyword", is("羊肉")))
+                    .andExpect(status().isOk());
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void when_add_Rs_given_null_attributes_then_400 () {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            User user = new User("jim", "男", 19, "jim@163.com",
+                    "21111111111", 10);
+            Rs rs1 = new Rs(null, "热干面", user);
+            String rsJson1 = "{\"keyword\":\"热干面\"," +
+                    "\"user\": {\"userName\":\"jim\",\"age\": 19,\"gender\": \"男\"," +
+                    "\"email\": \"jim@163.com\",\"phone\": \"21111111111\"," +
+                    "\"voteNum\": \"10\"}}";
+            mockMvc.perform(MockMvcRequestBuilders.post("/rs/addRs")
+                    .contentType(MediaType.APPLICATION_JSON).content(rsJson1))
+                    .andExpect(status().isBadRequest());
+
+            Rs rs2 = new Rs("新热搜", null, user);
+            String rsJson2 = "{\"name\":\"新增的事件\"," +
+                    "\"user\": {\"userName\":\"jim\",\"age\": 19,\"gender\": \"男\"," +
+                    "\"email\": \"jim@163.com\",\"phone\": \"21111111111\"," +
+                    "\"voteNum\": \"10\"}}";
+            mockMvc.perform(MockMvcRequestBuilders.post("/rs/addRs")
+                    .contentType(MediaType.APPLICATION_JSON).content(rsJson2))
+                    .andExpect(status().isBadRequest());
+
+            Rs rs3 = new Rs("新热搜", "热干面", null);
+            String rsJson3 = "{\"name\":\"新增的事件\",\"keyword\":\"热干面\"}";
+            mockMvc.perform(MockMvcRequestBuilders.post("/rs/addRs")
+                    .contentType(MediaType.APPLICATION_JSON).content(rsJson3))
+                    .andExpect(status().isBadRequest());
+
         }catch (Exception e) {
             e.printStackTrace();
         }
