@@ -43,6 +43,8 @@ class RsListApplicationTests {
 
     @BeforeEach
     public void beforeEach() {
+        userRepository.deleteAll();
+        rsRepository.deleteAll();
         UserDto userDto1 = UserDto.builder().userName("clark")
                 .age(19).email("lkn@163.com").gender("男").phone("11111111111")
                 .voteNum(10).build();
@@ -98,6 +100,25 @@ class RsListApplicationTests {
                 .andExpect(jsonPath("$[0].name", is("猪肉涨价了")))
                 .andExpect(jsonPath("$[0].keyword", is("猪")));
         mockMvc.perform(get("/users")).andExpect(status().isOk());
+    }
+
+    @Test
+    @Order(3)
+    public void when_delete_user_then_delete_rs_cascadly() throws Exception {
+        String rsJson1 = "{\"name\": \"猪肉涨价了\"," +
+                "\"keyword\": \"猪\"," +
+                "\"userId\": \"1\"}";
+        String rsJson2 = "{\"name\": \"牛肉涨价了\"," +
+                "\"keyword\": \"牛\"," +
+                "\"userId\": \"2\"}";
+        mockMvc.perform(post("/rs/addRs").contentType(MediaType.APPLICATION_JSON)
+                .content(rsJson1)).andExpect(status().isCreated());
+        mockMvc.perform(post("/rs/addRs").contentType(MediaType.APPLICATION_JSON)
+                .content(rsJson2)).andExpect(status().isCreated());
+        mockMvc.perform(get("/userDelete/2")).andExpect(status().isOk());
+        mockMvc.perform(get("/rs/list"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(0)));
     }
 
 }

@@ -3,6 +3,7 @@ package com.thoughtworks.rslist.api;
 import com.thoughtworks.rslist.domain.Error;
 import com.thoughtworks.rslist.domain.User;
 import com.thoughtworks.rslist.dto.UserDto;
+import com.thoughtworks.rslist.repository.RsRepository;
 import com.thoughtworks.rslist.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,12 +24,10 @@ public class UserController {
     private List<User> userList = new ArrayList<User>();
     private Logger logger = LoggerFactory.getLogger(RsController.class);
 
-    private UserRepository userRepository;
-
     @Autowired
-    public UserController(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    private UserRepository userRepository;
+    @Autowired
+    private RsRepository rsRepository;
 
     @PostMapping("/user")
     public ResponseEntity registerUser(@RequestBody @Valid User user){
