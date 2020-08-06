@@ -137,4 +137,9 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.error", is("invalid user")))
                 .andExpect(status().isBadRequest());
     }
+
+    @Test
+    public void should_add_user_to_database() {
+
+    }
 }
