@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -53,27 +54,9 @@ public class RsController {
 
   @GetMapping("/rs/{index}")
   public ResponseEntity getRsString(@PathVariable int index) {
-    if (index < 1 || index > rsList.size()) {
-      throw new RsIndexNotValidException("invalid index");
-    }
-    return ResponseEntity.ok(rsList.get(index-1));
+    return ResponseEntity.ok(rsRepository.findById(index));
   }
 
-  @GetMapping("/rs/sublist")
-  public ResponseEntity getRsListBetweenString(@RequestParam(required = false) Integer start, @RequestParam Integer end) {
-    if (start == null) {
-      if (end > 0 && end <= rsList.size()) {
-        return ResponseEntity.ok(rsList.subList(0, end-1));
-      } else {
-        throw new StartEndParamException("invalid request param");
-      }
-    } else {
-      if (start < 0 || start > rsList.size() || end < 1 || end > rsList.size()+1) {
-        throw new StartEndParamException("invalid request param");
-      }
-      return ResponseEntity.ok(rsList.subList(start-1, end-1));
-    }
-  }
 
   @PostMapping("/rs/addRs")
   public ResponseEntity addRs(@RequestBody @Valid Rs rs) {
@@ -86,22 +69,6 @@ public class RsController {
     return ResponseEntity.status(HttpStatus.CREATED).build();
   }
 
-  @PostMapping("/rs/modifyRs/{index}")
-  public ResponseEntity modifyRsInList(@PathVariable Integer index, @RequestBody Rs rs) {
-    if (rs.getName() == null && rs.getKeyword() == null) {
-      throw new RuntimeException("no new params");
-    }
-
-    if (rs.getName() != null) {
-      rsList.get(index-1).setName(rs.getName());
-    }
-
-    if (rs.getKeyword() != null) {
-      rsList.get(index-1).setKeyword(rs.getKeyword());
-    }
-    return ResponseEntity.created(null).build();
-  }
-
   @DeleteMapping("/rs/deleteRs/{index}")
   public ResponseEntity deleteRsInList(@PathVariable Integer index) {
     rsList.remove(index-1);
@@ -109,7 +76,11 @@ public class RsController {
   }
 
   @PostMapping("/rs/vote/{rsEventId}")
+  @Transactional
   public ResponseEntity vote(@RequestBody Vote vote) {
+    if (userRepository.findUserById(vote.getUserId()).getVoteNum() < vote.getVoteNum()) {
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+    }
     VoteDto voteDto = VoteDto.builder().voteNum(vote.getVoteNum())
             .userId(vote.getUserId()).voteTime(vote.getVoteTime()).build();
     voteRepository.save(voteDto);

@@ -133,5 +133,29 @@ class RsListApplicationTests {
                 .content(voteJson)).andExpect(status().isCreated());
     }
 
+    @Test
+    @Order(5)
+    public void when_vote_num_insufficient_then_400() throws Exception {
+        Vote vote = new Vote(15, 1, "2020-10-01:15:50:21");
+        ObjectMapper objectMapper = new ObjectMapper();
+        String voteJson = objectMapper.writeValueAsString(vote);
+        mockMvc.perform(post("/rs/vote/1").contentType(MediaType.APPLICATION_JSON)
+                .content(voteJson)).andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @Order(6)
+    public void given_rs_id_then_return_rs() throws Exception {
+        String rsJson1 = "{\"name\": \"猪肉涨价了\"," +
+                "\"keyword\": \"猪\"," +
+                "\"userId\": \"1\"}";
+        mockMvc.perform(post("/rs/addRs").contentType(MediaType.APPLICATION_JSON)
+                .content(rsJson1)).andExpect(status().isCreated());
+        mockMvc.perform(get("/rs/4").contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name", is("猪肉涨价了")))
+                .andExpect(jsonPath("$.keyword", is("猪")));
+    }
+
 
 }
