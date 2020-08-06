@@ -1,7 +1,7 @@
 package com.thoughtworks.rslist.api;
 
-import com.thoughtworks.rslist.model.Rs;
-import com.thoughtworks.rslist.model.User;
+import com.thoughtworks.rslist.domain.Rs;
+import com.thoughtworks.rslist.domain.User;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;

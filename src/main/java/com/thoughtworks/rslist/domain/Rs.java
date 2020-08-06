@@ -1,7 +1,4 @@
-package com.thoughtworks.rslist.model;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+package com.thoughtworks.rslist.domain;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;

@@ -2,8 +2,8 @@ package com.thoughtworks.rslist;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.rslist.api.RsController;
-import com.thoughtworks.rslist.model.Rs;
-import com.thoughtworks.rslist.model.User;
+import com.thoughtworks.rslist.domain.Rs;
+import com.thoughtworks.rslist.domain.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -86,97 +86,6 @@ class RsListApplicationTests {
     }
 
     @Test
-    public void given_one_Rs_then_add_into_list () {
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-
-            User user = new User("jim", "男", 19, "jim@163.com",
-                    "21111111111", 10);
-            Rs rs = new Rs("新增的事件", "热干面", user);
-            String rsJson = objectMapper.writeValueAsString(rs);
-            mockMvc.perform(MockMvcRequestBuilders.post("/rs/addRs")
-                    .contentType(MediaType.APPLICATION_JSON).content(rsJson))
-                    .andExpect(status().isOk());
-            mockMvc.perform(MockMvcRequestBuilders.get("/rs/list"))
-                    .andExpect(jsonPath("$", hasSize(4)))
-                    .andExpect(jsonPath("$[3].name", is("新增的事件")))
-                    .andExpect(jsonPath("$[3].keyword", is("热干面")))
-                    //.andExpect(jsonPath("$[3].user", is(user)))
-                    .andExpect(jsonPath("$[3]", hasKey("user")))
-                    .andExpect(status().isOk());
-        }catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    //@Test
-    public void given_null_user_then_add_into_list () {
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-
-            User user = new User("jim", "男", 19, "jim@163.com",
-                    "21111111111", 10);
-            Rs rs = new Rs("新增的事件", "热干面", user);
-            String rsJson = objectMapper.writeValueAsString(rs);
-            mockMvc.perform(MockMvcRequestBuilders.post("/rs/addRs")
-                    .contentType(MediaType.APPLICATION_JSON).content(rsJson))
-                    .andExpect(status().isOk());
-            mockMvc.perform(MockMvcRequestBuilders.post("/rs/addRs")
-                    .contentType(MediaType.APPLICATION_JSON).content(rsJson))
-                    .andExpect(status().isOk());
-            mockMvc.perform(MockMvcRequestBuilders.get("/user"))
-                    .andExpect(jsonPath("$", hasSize(1)))
-                    .andExpect(status().isOk());
-        }catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-//    @Test
-//    public void given_one_new_Rs_and_index_then_modify () {
-//        try {
-//            ObjectMapper objectMapper = new ObjectMapper();
-//            User user = new User("jim", "男", 19, "jim@163.com",
-//                    "21111111111", 10);
-//            Rs rs1 = new Rs("ttt", "zzz", user);
-//            String rs1Json = objectMapper.writeValueAsString(rs1);
-//            String url1 = "/rs/modifyRs/1";
-//            mockMvc.perform(MockMvcRequestBuilders.post(url1)
-//                    .contentType(MediaType.APPLICATION_JSON)
-//                    .content(rs1Json)).andExpect(status().isOk());
-//            mockMvc.perform(MockMvcRequestBuilders.get("/rs/1"))
-//                    .andExpect(jsonPath("$.name", is("ttt")))
-//                    .andExpect(jsonPath("$.keyword", is("zzz")))
-//                    .andExpect(jsonPath("$.user", is(user)))
-//                    .andExpect(status().isOk());
-//
-//            Rs rs2 = new Rs("hasName", null);
-//            String rs2Json = objectMapper.writeValueAsString(rs2);
-//            String url2 = "/rs/modifyRs/2";
-//            mockMvc.perform(MockMvcRequestBuilders.post(url2)
-//                    .contentType(MediaType.APPLICATION_JSON)
-//                    .content(rs2Json)).andExpect(status().isOk());
-//            mockMvc.perform(MockMvcRequestBuilders.get("/rs/2"))
-//                    .andExpect(jsonPath("$.name", is("hasName")))
-//                    .andExpect(jsonPath("$.keyword", is("牛肉")))
-//                    .andExpect(status().isOk());
-//
-//            Rs rs3 = new Rs(null, "hasKeyword");
-//            String rs3Json = objectMapper.writeValueAsString(rs3);
-//            String url3 = "/rs/modifyRs/3";
-//            mockMvc.perform(MockMvcRequestBuilders.post(url3)
-//                    .contentType(MediaType.APPLICATION_JSON)
-//                    .content(rs3Json)).andExpect(status().isOk());
-//            mockMvc.perform(MockMvcRequestBuilders.get("/rs/3"))
-//                    .andExpect(jsonPath("$.name", is("第三条事件")))
-//                    .andExpect(jsonPath("$.keyword", is("hasKeyword")))
-//                    .andExpect(status().isOk());
-//        }catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
-
-    @Test
     public void given_index_then_delete () {
         try {
             mockMvc.perform(MockMvcRequestBuilders.delete("/rs/deleteRs/2"))
@@ -221,6 +130,76 @@ class RsListApplicationTests {
             e.printStackTrace();
         }
     }
+
+    @Test
+    public void given_one_Rs_then_add_into_list () {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+
+            User user = new User("jim", "男", 19, "jim@163.com",
+                    "21111111111", 10);
+            Rs rs = new Rs("新增的事件", "热干面", user);
+            String rsJson = objectMapper.writeValueAsString(rs);
+            mockMvc.perform(MockMvcRequestBuilders.post("/rs/addRs")
+                    .contentType(MediaType.APPLICATION_JSON).content(rsJson))
+                    .andExpect(status().isOk());
+            mockMvc.perform(MockMvcRequestBuilders.get("/rs/list"))
+                    .andExpect(jsonPath("$", hasSize(4)))
+                    .andExpect(jsonPath("$[3].name", is("新增的事件")))
+                    .andExpect(jsonPath("$[3].keyword", is("热干面")))
+                    //.andExpect(jsonPath("$[3].user", is(user)))
+                    .andExpect(jsonPath("$[3]", hasKey("user")))
+                    .andExpect(status().isOk());
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+//    @Test
+//    public void given_one_new_Rs_and_index_then_modify () {
+//        try {
+//            ObjectMapper objectMapper = new ObjectMapper();
+//            User user = new User("jim", "男", 19, "jim@163.com",
+//                    "21111111111", 10);
+//            Rs rs1 = new Rs("ttt", "zzz", user);
+//            String rs1Json = objectMapper.writeValueAsString(rs1);
+//            String url1 = "/rs/modifyRs/1";
+//            mockMvc.perform(MockMvcRequestBuilders.post(url1)
+//                    .contentType(MediaType.APPLICATION_JSON)
+//                    .content(rs1Json)).andExpect(status().isOk());
+//            mockMvc.perform(MockMvcRequestBuilders.get("/rs/1"))
+//                    .andExpect(jsonPath("$.name", is("ttt")))
+//                    .andExpect(jsonPath("$.keyword", is("zzz")))
+//                    .andExpect(jsonPath("$.user", is(user)))
+//                    .andExpect(status().isOk());
+//
+//            Rs rs2 = new Rs("hasName", null);
+//            String rs2Json = objectMapper.writeValueAsString(rs2);
+//            String url2 = "/rs/modifyRs/2";
+//            mockMvc.perform(MockMvcRequestBuilders.post(url2)
+//                    .contentType(MediaType.APPLICATION_JSON)
+//                    .content(rs2Json)).andExpect(status().isOk());
+//            mockMvc.perform(MockMvcRequestBuilders.get("/rs/2"))
+//                    .andExpect(jsonPath("$.name", is("hasName")))
+//                    .andExpect(jsonPath("$.keyword", is("牛肉")))
+//                    .andExpect(status().isOk());
+//
+//            Rs rs3 = new Rs(null, "hasKeyword");
+//            String rs3Json = objectMapper.writeValueAsString(rs3);
+//            String url3 = "/rs/modifyRs/3";
+//            mockMvc.perform(MockMvcRequestBuilders.post(url3)
+//                    .contentType(MediaType.APPLICATION_JSON)
+//                    .content(rs3Json)).andExpect(status().isOk());
+//            mockMvc.perform(MockMvcRequestBuilders.get("/rs/3"))
+//                    .andExpect(jsonPath("$.name", is("第三条事件")))
+//                    .andExpect(jsonPath("$.keyword", is("hasKeyword")))
+//                    .andExpect(status().isOk());
+//        }catch (Exception e) {
+//            e.printStackTrace();
+//        }
+
+//    }
 
 
 

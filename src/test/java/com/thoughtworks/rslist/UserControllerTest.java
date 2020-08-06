@@ -1,8 +1,7 @@
 package com.thoughtworks.rslist;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.thoughtworks.rslist.model.User;
+import com.thoughtworks.rslist.domain.User;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -77,6 +76,5 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$[0].userName", is("clark")))
                 .andExpect(jsonPath("$[0].gender", is("男")))
                 .andExpect(status().isOk());
-
     }
 }
