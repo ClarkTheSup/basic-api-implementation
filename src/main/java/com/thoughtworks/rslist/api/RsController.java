@@ -80,6 +80,26 @@ public class RsController {
     return ResponseEntity.ok(null);
   }
 
+  @PostMapping("/rs/{rsEventId}")
+  @Transactional
+  public ResponseEntity updateRs(@PathVariable Integer rsEventId, @RequestBody Rs rs) {
+    RsDto rsDto = rsRepository.findById(rsEventId).orElse(null);
+    if (rsDto == null || rsDto.getUserDto().getId() != rs.getUserId() || rs.getUserId() == 0) {
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+    }
+
+    if (rs.getName() == null) {
+      rsRepository.updateRsById(rsDto.getName(), rs.getKeyword(), rsEventId);
+    } else if (rs.getKeyword() == null) {
+      rsRepository.updateRsById(rs.getName(), rsDto.getKeyword(), rsEventId);
+    } else {
+      rsRepository.updateRsById(rs.getName(), rs.getKeyword(), rsEventId);
+    }
+    return ResponseEntity.status(HttpStatus.CREATED).build();
+  }
+
+
+
   @PostMapping("/rs/vote/{rsEventId}")
   @Transactional
   public ResponseEntity vote(@RequestBody Vote vote) {

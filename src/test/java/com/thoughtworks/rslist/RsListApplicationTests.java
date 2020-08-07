@@ -20,6 +20,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -125,6 +126,45 @@ class RsListApplicationTests {
 
     @Test
     @Order(4)
+    //@Transactional
+    public void given_new_rs_then_update_rs() throws Exception {
+        String rsJson1 = "{\"name\": \"猪肉涨价了\"," +
+                "\"keyword\": \"猪\"," +
+                "\"userId\": \"1\"}";
+        String rsJson2 = "{\"name\": \"羊肉涨价了\"," +
+                "\"keyword\": \"猪\"," +
+                "\"userId\": \"2\"}";
+        mockMvc.perform(post("/rs/addRs").contentType(MediaType.APPLICATION_JSON)
+                .content(rsJson1)).andExpect(status().isCreated());
+        mockMvc.perform(post("/rs/addRs").contentType(MediaType.APPLICATION_JSON)
+                .content(rsJson2)).andExpect(status().isCreated());
+
+        String new_rs1 = "{\"name\": \"嘿嘿\"," +
+                "\"keyword\": \"我\"," +
+                "\"userId\": \"1\"}";
+        String new_rs2 = "{\"name\": \"只有name\"," +
+                "\"userId\": \"1\"}";
+        String new_rs3 = "{\"keyword\": \"只有keyword\"," +
+                "\"userId\": \"1\"}";
+        String new_rs4 = "{\"keyword\": \"no user_id\"}";
+        mockMvc.perform(post("/rs/4").contentType(MediaType.APPLICATION_JSON)
+                .content(new_rs1)).andExpect(status().isCreated());
+        mockMvc.perform(post("/rs/4").contentType(MediaType.APPLICATION_JSON)
+                .content(new_rs2)).andExpect(status().isCreated());
+        mockMvc.perform(post("/rs/4").contentType(MediaType.APPLICATION_JSON)
+                .content(new_rs3)).andExpect(status().isCreated());
+        mockMvc.perform(post("/rs/4").contentType(MediaType.APPLICATION_JSON)
+                .content(new_rs4)).andExpect(status().isBadRequest());
+    }
+
+
+
+
+
+
+
+    @Test
+    //@Order(4)
     public void when_vote_then_add_to_database() throws Exception {
         Vote vote = new Vote(5, 1, "2020-10-01:15:50:21");
         ObjectMapper objectMapper = new ObjectMapper();
@@ -134,7 +174,7 @@ class RsListApplicationTests {
     }
 
     @Test
-    @Order(5)
+    //@Order(5)
     public void when_vote_num_insufficient_then_400() throws Exception {
         Vote vote = new Vote(15, 1, "2020-10-01:15:50:21");
         ObjectMapper objectMapper = new ObjectMapper();
@@ -144,7 +184,7 @@ class RsListApplicationTests {
     }
 
     @Test
-    @Order(6)
+    //@Order(6)
     public void given_rs_id_then_return_rs() throws Exception {
         String rsJson1 = "{\"name\": \"猪肉涨价了\"," +
                 "\"keyword\": \"猪\"," +
