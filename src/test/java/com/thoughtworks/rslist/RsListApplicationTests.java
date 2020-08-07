@@ -9,6 +9,7 @@ import com.thoughtworks.rslist.domain.Vote;
 import com.thoughtworks.rslist.dto.UserDto;
 import com.thoughtworks.rslist.repository.RsRepository;
 import com.thoughtworks.rslist.repository.UserRepository;
+import com.thoughtworks.rslist.repository.VoteRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
@@ -20,8 +21,11 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static org.hamcrest.Matchers.*;
@@ -43,10 +47,17 @@ class RsListApplicationTests {
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    VoteRepository voteRepository;
+
+    SimpleDateFormat ft = new SimpleDateFormat ("yyyy-MM-dd hh:mm:ss");
+
     @BeforeEach
     public void beforeEach() {
         userRepository.deleteAll();
         rsRepository.deleteAll();
+        voteRepository.deleteAll();
+
         UserDto userDto1 = UserDto.builder().userName("clark")
                 .age(19).email("lkn@163.com").gender("男").phone("11111111111")
                 .voteNum(10).build();
@@ -65,6 +76,7 @@ class RsListApplicationTests {
     public void afterEach() {
         userRepository.deleteAll();
         rsRepository.deleteAll();
+        voteRepository.deleteAll();
     }
 
     @Test
@@ -104,7 +116,7 @@ class RsListApplicationTests {
         mockMvc.perform(get("/users")).andExpect(status().isOk());
     }
 
-    //@Test
+    @Test
     @Order(3)
     public void when_delete_user_then_delete_rs_cascadly() throws Exception {
         String rsJson1 = "{\"name\": \"猪肉涨价了\"," +
@@ -120,23 +132,61 @@ class RsListApplicationTests {
         mockMvc.perform(get("/userDelete/2")).andExpect(status().isOk());
         mockMvc.perform(get("/rs/list"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(0)));
+                .andExpect(jsonPath("$", hasSize(1)));
     }
 
     @Test
     @Order(4)
-    public void when_vote_then_add_to_database() throws Exception {
-        Vote vote = new Vote(5, 1, "2020-10-01:15:50:21");
-        ObjectMapper objectMapper = new ObjectMapper();
-        String voteJson = objectMapper.writeValueAsString(vote);
-        mockMvc.perform(post("/rs/vote/1").contentType(MediaType.APPLICATION_JSON)
-                .content(voteJson)).andExpect(status().isCreated());
+    //@Transactional
+    public void given_new_rs_then_update_rs() throws Exception {
+        String rsJson1 = "{\"name\": \"猪肉涨价了\"," +
+                "\"keyword\": \"猪\"," +
+                "\"userId\": \"1\"}";
+        String rsJson2 = "{\"name\": \"羊肉涨价了\"," +
+                "\"keyword\": \"猪\"," +
+                "\"userId\": \"2\"}";
+        mockMvc.perform(post("/rs/addRs").contentType(MediaType.APPLICATION_JSON)
+                .content(rsJson1)).andExpect(status().isCreated());
+        mockMvc.perform(post("/rs/addRs").contentType(MediaType.APPLICATION_JSON)
+                .content(rsJson2)).andExpect(status().isCreated());
+
+        String new_rs1 = "{\"name\": \"嘿嘿\"," +
+                "\"keyword\": \"我\"," +
+                "\"userId\": \"1\"}";
+        String new_rs2 = "{\"name\": \"只有name\"," +
+                "\"userId\": \"1\"}";
+        String new_rs3 = "{\"keyword\": \"只有keyword\"," +
+                "\"userId\": \"1\"}";
+        String new_rs4 = "{\"keyword\": \"no user_id\"}";
+        mockMvc.perform(post("/rsUpdate/4").contentType(MediaType.APPLICATION_JSON)
+                .content(new_rs1)).andExpect(status().isCreated());
+        mockMvc.perform(post("/rsUpdate/4").contentType(MediaType.APPLICATION_JSON)
+                .content(new_rs2)).andExpect(status().isCreated());
+        mockMvc.perform(post("/rsUpdate/4").contentType(MediaType.APPLICATION_JSON)
+                .content(new_rs3)).andExpect(status().isCreated());
+        mockMvc.perform(post("/rsUpdate/4").contentType(MediaType.APPLICATION_JSON)
+                .content(new_rs4)).andExpect(status().isBadRequest());
     }
 
     @Test
     @Order(5)
+    public void when_vote_then_add_to_database() throws Exception {
+        Date dNow = new Date( );
+
+        Vote vote = new Vote(4, 1, ft.format(dNow));
+        ObjectMapper objectMapper = new ObjectMapper();
+        String voteJson = objectMapper.writeValueAsString(vote);
+        mockMvc.perform(post("/rs/vote/1").contentType(MediaType.APPLICATION_JSON)
+                .content(voteJson)).andExpect(status().isCreated());
+        mockMvc.perform(get("/user/1")).andExpect(status().isOk())
+                .andExpect(jsonPath("$.voteNum", is(6)));
+    }
+
+    @Test
+    @Order(6)
     public void when_vote_num_insufficient_then_400() throws Exception {
-        Vote vote = new Vote(15, 1, "2020-10-01:15:50:21");
+        Date dNow = new Date( );
+        Vote vote = new Vote(15, 1, ft.format(dNow));
         ObjectMapper objectMapper = new ObjectMapper();
         String voteJson = objectMapper.writeValueAsString(vote);
         mockMvc.perform(post("/rs/vote/1").contentType(MediaType.APPLICATION_JSON)
@@ -144,19 +194,21 @@ class RsListApplicationTests {
     }
 
     @Test
-    @Order(6)
-    public void given_rs_id_then_return_rs() throws Exception {
+    @Order(7)
+    public void should_return_formatted_rs_list() throws Exception {
         String rsJson1 = "{\"name\": \"猪肉涨价了\"," +
                 "\"keyword\": \"猪\"," +
                 "\"userId\": \"1\"}";
         mockMvc.perform(post("/rs/addRs").contentType(MediaType.APPLICATION_JSON)
                 .content(rsJson1)).andExpect(status().isCreated());
-        mockMvc.perform(get("/rs/4").contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/rs/list")).andExpect(status().isOk())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name", is("猪肉涨价了")))
-                .andExpect(jsonPath("$.keyword", is("猪")));
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].name", is("猪肉涨价了")))
+                .andExpect(jsonPath("$[0].keyword", is("猪")))
+                .andExpect(jsonPath("$[0].user_id", is("1")))
+                .andExpect(jsonPath("$[0].vote_num", is("10")));;
     }
-
 }
 
 

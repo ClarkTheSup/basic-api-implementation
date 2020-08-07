@@ -9,23 +9,23 @@ import java.io.Serializable;
 public class User implements Serializable {
     @NotNull
     @Size(max = 8)
-    @JsonProperty("user_name")
+    //@JsonProperty("user_name")
     private String userName;
     @NotNull
-    @JsonProperty("user_gender")
+    //@JsonProperty("user_gender")
     private String gender;
     @NotNull
     @Max(value = 100)
     @Min(value = 18)
-    @JsonProperty("user_age")
+    //@JsonProperty("user_age")
     private int age;
     @Email
-    @JsonProperty("user_email")
+    //@JsonProperty("user_email")
     private String email;
     @Pattern(regexp = "1\\d{10}")
-    @JsonProperty("user_phone")
+    //@JsonProperty("user_phone")
     private String phone;
-    @JsonProperty("user_voteNum")
+    //@JsonProperty("user_voteNum")
     private int voteNum = 10;
 
     public User(){}

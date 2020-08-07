@@ -1,11 +1,14 @@
 package com.thoughtworks.rslist.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -25,7 +28,7 @@ public class UserDto{
     private String phone;
     private int voteNum = 10;
 
-    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "userDto")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "userDto")
     List<RsDto> rsDtoList;
 
 }
