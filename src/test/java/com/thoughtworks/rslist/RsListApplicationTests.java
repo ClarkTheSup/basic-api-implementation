@@ -209,5 +209,20 @@ class RsListApplicationTests {
                 .andExpect(jsonPath("$.vote_num", is("10")));
     }
 
-
+    @Test
+    @Order(7)
+    public void should_return_formatted_rs_list() throws Exception {
+        String rsJson1 = "{\"name\": \"猪肉涨价了\"," +
+                "\"keyword\": \"猪\"," +
+                "\"userId\": \"1\"}";
+        mockMvc.perform(post("/rs/addRs").contentType(MediaType.APPLICATION_JSON)
+                .content(rsJson1)).andExpect(status().isCreated());
+        mockMvc.perform(get("/rs/list")).andExpect(status().isOk())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].name", is("猪肉涨价了")))
+                .andExpect(jsonPath("$[0].keyword", is("猪")))
+                .andExpect(jsonPath("$[0].user_id", is("1")))
+                .andExpect(jsonPath("$[0].vote_num", is("10")));;
+    }
 }

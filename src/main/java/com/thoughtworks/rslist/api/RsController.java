@@ -53,20 +53,19 @@ public class RsController {
   @GetMapping("/rs/list")
   public ResponseEntity getRsListString() {
     List<RsDto> rsDtoList = rsRepository.findAll();
-    UserDto userDto = rsDtoList.get(0).getUserDto();
-    return ResponseEntity.status(HttpStatus.OK).body(rsDtoList);
+    List<Map> mapList = new ArrayList<Map>();
+    rsDtoList.stream().forEach(rsDto -> {
+      UserDto userDto = rsDto.getUserDto();
+      mapList.add(changeJsonFormat(rsDto, userDto));
+    });
+    return ResponseEntity.status(HttpStatus.OK).body(mapList);
   }
 
   @GetMapping("/rs/{index}")
   public ResponseEntity getRsString(@PathVariable int index) {
     RsDto rsDto = rsRepository.findById(index).orElse(null);
     UserDto userDto = rsDto.getUserDto();
-    Map<String, String> map = new HashMap<String, String>();
-    map.put("name", rsDto.getName());
-    map.put("keyword", rsDto.getKeyword());
-    map.put("user_id", String.valueOf(userDto.getId()));
-    map.put("vote_num", String.valueOf(userDto.getVoteNum()));
-    return ResponseEntity.status(HttpStatus.OK).body(map);
+    return ResponseEntity.status(HttpStatus.OK).body(changeJsonFormat(rsDto, userDto));
   }
 
 
@@ -134,6 +133,15 @@ public class RsController {
     }
     logger.error(message);
     return ResponseEntity.badRequest().body(error);
+  }
+
+  public Map changeJsonFormat(RsDto rsDto, UserDto userDto) {
+    Map<String, String> map = new HashMap<String, String>();
+    map.put("name", rsDto.getName());
+    map.put("keyword", rsDto.getKeyword());
+    map.put("user_id", String.valueOf(userDto.getId()));
+    map.put("vote_num", String.valueOf(userDto.getVoteNum()));
+    return map;
   }
 
 }
