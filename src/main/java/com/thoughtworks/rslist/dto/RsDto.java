@@ -1,5 +1,7 @@
 package com.thoughtworks.rslist.dto;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.thoughtworks.rslist.domain.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,8 +24,9 @@ public class RsDto {
 
     private String name;
     private String keyword;
-    private int userId;
+    //private int userId;
 
     @ManyToOne
+    @JsonIgnore
     UserDto userDto;
 }

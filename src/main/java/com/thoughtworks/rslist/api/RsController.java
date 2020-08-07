@@ -2,6 +2,7 @@ package com.thoughtworks.rslist.api;
 
 import com.thoughtworks.rslist.domain.Vote;
 import com.thoughtworks.rslist.dto.RsDto;
+import com.thoughtworks.rslist.dto.UserDto;
 import com.thoughtworks.rslist.dto.VoteDto;
 import com.thoughtworks.rslist.exception.RsIndexNotValidException;
 import com.thoughtworks.rslist.exception.StartEndParamException;
@@ -49,7 +50,9 @@ public class RsController {
 
   @GetMapping("/rs/list")
   public ResponseEntity getRsListString() {
-    return ResponseEntity.ok(rsRepository.findAll());
+    List<RsDto> rsDtoList = rsRepository.findAll();
+    UserDto userDto = rsDtoList.get(0).getUserDto();
+    return ResponseEntity.status(HttpStatus.OK).body(rsDtoList);
   }
 
   @GetMapping("/rs/{index}")
@@ -60,11 +63,13 @@ public class RsController {
 
   @PostMapping("/rs/addRs")
   public ResponseEntity addRs(@RequestBody @Valid Rs rs) {
-    if(userRepository.findUserById(rs.getUserId()) == null){
+    UserDto userDto = userRepository.findUserById(rs.getUserId());
+    if(userDto == null){
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
 
-    RsDto rsDto = RsDto.builder().name(rs.getName()).keyword(rs.getKeyword()).userId(rs.getUserId()).build();
+    RsDto rsDto = RsDto.builder().name(rs.getName()).
+            keyword(rs.getKeyword()).userDto(userDto).build();
     rsRepository.save(rsDto);
     return ResponseEntity.status(HttpStatus.CREATED).build();
   }

@@ -104,7 +104,7 @@ class RsListApplicationTests {
         mockMvc.perform(get("/users")).andExpect(status().isOk());
     }
 
-    //@Test
+    @Test
     @Order(3)
     public void when_delete_user_then_delete_rs_cascadly() throws Exception {
         String rsJson1 = "{\"name\": \"猪肉涨价了\"," +
@@ -120,7 +120,7 @@ class RsListApplicationTests {
         mockMvc.perform(get("/userDelete/2")).andExpect(status().isOk());
         mockMvc.perform(get("/rs/list"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(0)));
+                .andExpect(jsonPath("$", hasSize(1)));
     }
 
     @Test
