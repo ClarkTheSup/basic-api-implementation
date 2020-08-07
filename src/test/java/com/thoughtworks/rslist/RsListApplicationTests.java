@@ -164,13 +164,15 @@ class RsListApplicationTests {
 
 
     @Test
-    //@Order(4)
+    @Order(5)
     public void when_vote_then_add_to_database() throws Exception {
-        Vote vote = new Vote(5, 1, "2020-10-01:15:50:21");
+        Vote vote = new Vote(4, 1, "2020-10-01:15:50:21");
         ObjectMapper objectMapper = new ObjectMapper();
         String voteJson = objectMapper.writeValueAsString(vote);
         mockMvc.perform(post("/rs/vote/1").contentType(MediaType.APPLICATION_JSON)
                 .content(voteJson)).andExpect(status().isCreated());
+        mockMvc.perform(get("/user/1")).andExpect(status().isOk())
+                .andExpect(jsonPath("$.voteNum", is(6)));
     }
 
     @Test

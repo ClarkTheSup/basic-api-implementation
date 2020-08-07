@@ -98,17 +98,17 @@ public class RsController {
     return ResponseEntity.status(HttpStatus.CREATED).build();
   }
 
-
-
   @PostMapping("/rs/vote/{rsEventId}")
   @Transactional
   public ResponseEntity vote(@RequestBody Vote vote) {
-    if (userRepository.findUserById(vote.getUserId()).getVoteNum() < vote.getVoteNum()) {
+    UserDto userDto = userRepository.findUserById(vote.getUserId());
+    if (userDto.getVoteNum() < vote.getVoteNum()) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
     VoteDto voteDto = VoteDto.builder().voteNum(vote.getVoteNum())
             .userId(vote.getUserId()).voteTime(vote.getVoteTime()).build();
     voteRepository.save(voteDto);
+    userRepository.updateUserVoteNumById(userDto.getVoteNum() - vote.getVoteNum(), vote.getUserId());
     return ResponseEntity.status(HttpStatus.CREATED).build();
   }
 
