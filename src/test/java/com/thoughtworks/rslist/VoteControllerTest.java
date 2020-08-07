@@ -17,6 +17,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import static java.lang.Thread.sleep;
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -38,6 +42,8 @@ public class VoteControllerTest {
 
     @Autowired
     VoteRepository voteRepository;
+
+    SimpleDateFormat ft = new SimpleDateFormat ("yyyy-MM-dd hh:mm:ss");
 
     @BeforeEach
     public void beforeEach() {
@@ -64,22 +70,31 @@ public class VoteControllerTest {
     }
 
     @Test
-    @Order(7)
+    @Order(1)
     public void given_start_end_time_then_find_vote_between_them() throws Exception {
-        Vote vote1 = new Vote(1, 1, "5");
-        Vote vote2 = new Vote(2, 1, "6");
-        Vote vote3 = new Vote(3, 1, "7");
+        Date dNow = new Date();
+        Vote vote1 = new Vote(1, 1, ft.format(dNow));
+        sleep(1000);
+        Vote vote2 = new Vote(2, 1, ft.format(dNow));
+        sleep(1000);
+        Vote vote3 = new Vote(3, 1, ft.format(dNow));
+
         ObjectMapper objectMapper = new ObjectMapper();
         String voteJson1 = objectMapper.writeValueAsString(vote1);
         String voteJson2 = objectMapper.writeValueAsString(vote2);
         String voteJson3 = objectMapper.writeValueAsString(vote3);
+
         mockMvc.perform(post("/rs/vote/1").contentType(MediaType.APPLICATION_JSON)
                 .content(voteJson1)).andExpect(status().isCreated());
         mockMvc.perform(post("/rs/vote/1").contentType(MediaType.APPLICATION_JSON)
                 .content(voteJson2)).andExpect(status().isCreated());
         mockMvc.perform(post("/rs/vote/1").contentType(MediaType.APPLICATION_JSON)
                 .content(voteJson3)).andExpect(status().isCreated());
-        mockMvc.perform(get("/vote/listBetweenTime?startTime=0&endTime=100"))
+
+        String start_time = "1997-01-01 11:11:11";
+        String end_time = "2997-01-01 11:11:11";
+        mockMvc.perform(get("/vote/listBetweenTime?startTime="+ start_time +
+                "&endTime=" + end_time))
                 .andExpect(status().isOk()).andExpect(jsonPath("$", hasSize(3)));
     }
 }

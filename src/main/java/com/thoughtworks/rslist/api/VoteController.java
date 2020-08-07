@@ -14,9 +14,8 @@ public class VoteController {
     VoteRepository voteRepository;
 
     @GetMapping("/vote/listBetweenTime")
-    public ResponseEntity getVoteListBetweenTime(@RequestParam int startTime, @RequestParam int endTime) {
+    public ResponseEntity getVoteListBetweenTime(@RequestParam String startTime, @RequestParam String endTime) {
         return ResponseEntity.status(HttpStatus.OK).body(
                 voteRepository.findAllBetweenTime(startTime, endTime));
     }
-
 }

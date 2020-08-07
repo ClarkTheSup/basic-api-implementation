@@ -8,6 +8,6 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface VoteRepository extends CrudRepository<VoteDto, Integer> {
-    @Query(nativeQuery=true, value="select * from vote where vote_time >= ?1 and vote_time <= ?2")
-    List<VoteDto> findAllBetweenTime(int startTime,int endTime);
+    @Query(nativeQuery=true, value="select * from vote v where v.vote_time >= ? and v.vote_time <= ?")
+    List<VoteDto> findAllBetweenTime(String startTime,String endTime);
 }
