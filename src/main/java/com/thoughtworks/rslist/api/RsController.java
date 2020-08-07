@@ -23,7 +23,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class RsController {
@@ -57,7 +59,14 @@ public class RsController {
 
   @GetMapping("/rs/{index}")
   public ResponseEntity getRsString(@PathVariable int index) {
-    return ResponseEntity.ok(rsRepository.findById(index));
+    RsDto rsDto = rsRepository.findById(index).orElse(null);
+    UserDto userDto = rsDto.getUserDto();
+    Map<String, String> map = new HashMap<String, String>();
+    map.put("name", rsDto.getName());
+    map.put("keyword", rsDto.getKeyword());
+    map.put("user_id", String.valueOf(userDto.getId()));
+    map.put("vote_num", String.valueOf(userDto.getVoteNum()));
+    return ResponseEntity.status(HttpStatus.OK).body(map);
   }
 
 
@@ -80,7 +89,7 @@ public class RsController {
     return ResponseEntity.ok(null);
   }
 
-  @PostMapping("/rs/{rsEventId}")
+  @PostMapping("/rsUpdate/{rsEventId}")
   @Transactional
   public ResponseEntity updateRs(@PathVariable Integer rsEventId, @RequestBody Rs rs) {
     RsDto rsDto = rsRepository.findById(rsEventId).orElse(null);
